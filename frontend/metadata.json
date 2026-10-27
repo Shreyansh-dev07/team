@@ -1,6 +1,6 @@
 {
   "name": "SudhaarSetu - Kanpur Civic Issue Portal",
-  "description": "Civic-issue reporting, tracking, and department routing platform for the citizens of Kanpur, Uttar Pradesh.",
+  "description": "Civic-issue reporting, tracking, and municipal department routing platform for the citizens of Kanpur, Uttar Pradesh.",
   "requestFramePermissions": [
     "geolocation"
   ],

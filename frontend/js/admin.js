@@ -1,348 +1,260 @@
 /**
- * SudhaarSetu - Government Department / Admin Controller (js/admin.js)
- * Triage complaints, update statuses, adjust priority, assign teams,
- * attach resolution evidence, and compute Kanpur civic statistics.
+ * SudhaarSetu — Department & Admin Dashboard Script
  */
 
-document.addEventListener("DOMContentLoaded", () => {
-  let activeComplaint = null;
-  let filters = {
-    dept: "all",
-    status: "all",
-    priority: "all",
-    search: ""
-  };
+let adminComplaints = [];
+let activeEditingId = null;
 
-  const tbody = document.getElementById("adminComplaintsTbody");
-  const modal = document.getElementById("actionModal");
-  const modalCloseBtn = document.getElementById("actionModalClose");
-  const saveChangesBtn = document.getElementById("saveAdminChangesBtn");
+document.addEventListener('DOMContentLoaded', async () => {
+  adminComplaints = await fetchAllComplaints();
+  renderAdminStats();
+  renderDistributionBars();
+  renderAdminTable();
+  initAdminFilters();
+  initModalListeners();
+});
 
-  function renderDashboard() {
-    const all = window.getComplaints();
+function renderAdminStats() {
+  const total = adminComplaints.length;
+  const newCount = adminComplaints.filter(c => c.status === 'Registered').length;
+  const progressCount = adminComplaints.filter(c => c.status === 'In Progress' || c.status === 'Assigned').length;
+  const resolvedCount = adminComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed').length;
+  const highCount = adminComplaints.filter(c => c.priority === 'High' && c.status !== 'Resolved').length;
+  const rate = total > 0 ? Math.round((resolvedCount / total) * 100) : 0;
 
-    // 1. Compute Statistics
-    const total = all.length;
-    const registered = all.filter(c => c.status === "Registered").length;
-    const underReview = all.filter(c => c.status === "Under Review").length;
-    const assigned = all.filter(c => c.status === "Assigned").length;
-    const inProgress = all.filter(c => c.status === "In Progress").length;
-    const resolved = all.filter(c => c.status === "Resolved" || c.status === "Closed").length;
-    const pending = registered + underReview + assigned;
-    const highPriority = all.filter(c => c.priority === "High").length;
-    const resRate = total > 0 ? Math.round((resolved / total) * 100) : 0;
+  document.getElementById('adminTotalCount').textContent = total;
+  document.getElementById('adminNewCount').textContent = newCount;
+  document.getElementById('adminProgressCount').textContent = progressCount;
+  document.getElementById('adminResolvedCount').textContent = resolvedCount;
+  document.getElementById('adminHighPriorityCount').textContent = highCount;
+  document.getElementById('adminResolutionRate').textContent = `${rate}%`;
+}
 
-    // Update Stat Cards
-    setCardVal("adminTotalCount", total);
-    setCardVal("adminNewCount", registered);
-    setCardVal("adminPendingCount", pending);
-    setCardVal("adminProgressCount", inProgress);
-    setCardVal("adminResolvedCount", resolved);
-    setCardVal("adminHighPriorityCount", highPriority);
-    setCardVal("adminResolutionRate", `${resRate}%`);
+function renderDistributionBars() {
+  const catContainer = document.getElementById('adminCategoryBars');
+  const zoneContainer = document.getElementById('adminZoneBars');
 
-    // 2. Render Gov-style Progress Charts
-    renderGovCharts(all, total, resolved);
+  if (catContainer) {
+    const counts = {};
+    adminComplaints.forEach(c => counts[c.deptCode] = (counts[c.deptCode] || 0) + 1);
+    const maxVal = Math.max(...Object.values(counts), 1);
 
-    // 3. Render Table
-    renderComplaintsTable(all);
-  }
-
-  function setCardVal(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
-  }
-
-  function renderGovCharts(all, total, resolved) {
-    // Breakdown by Category
-    const catCounts = {
-      pothole: 0,
-      road_crack: 0,
-      garbage: 0,
-      streetlight: 0,
-      water: 0,
-      drainage: 0,
-      other: 0
-    };
-
-    all.forEach(c => {
-      if (catCounts[c.category] !== undefined) catCounts[c.category]++;
-      else catCounts.other++;
-    });
-
-    const categoryChart = document.getElementById("adminCategoryBars");
-    if (categoryChart) {
-      const items = [
-        { label: "Road & PWD", count: catCounts.pothole + catCounts.road_crack, color: "#ea580c" },
-        { label: "Sanitation & SWM", count: catCounts.garbage, color: "#16a34a" },
-        { label: "Streetlights", count: catCounts.streetlight, color: "#ca8a04" },
-        { label: "Kanpur Jal Sansthan", count: catCounts.water, color: "#0284c7" },
-        { label: "Drainage & Sewerage", count: catCounts.drainage, color: "#7c3aed" },
-        { label: "General Civic", count: catCounts.other, color: "#64748b" }
-      ];
-
-      categoryChart.innerHTML = items.map(item => {
-        const pct = total > 0 ? Math.round((item.count / total) * 100) : 0;
-        return `
-          <div style="margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; font-weight: 600; margin-bottom: 4px;">
-              <span>${item.label}</span>
-              <span>${item.count} (${pct}%)</span>
-            </div>
-            <div style="height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden;">
-              <div style="width: ${pct}%; height: 100%; background: ${item.color}; border-radius: 5px;"></div>
-            </div>
+    catContainer.innerHTML = Object.entries(counts).map(([code, count]) => {
+      const pct = Math.round((count / maxVal) * 100);
+      return `
+        <div style="margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; margin-bottom: 2px;">
+            <span style="font-weight: 600; color: #1e293b;">${code}</span>
+            <span style="color: #64748b;">${count} complaints</span>
           </div>
-        `;
-      }).join("");
-    }
-
-    // Breakdown by Kanpur Zones
-    const zoneChart = document.getElementById("adminZoneBars");
-    if (zoneChart) {
-      const zoneCounts = {};
-      all.forEach(c => {
-        const area = c.location.area || "Central Kanpur";
-        zoneCounts[area] = (zoneCounts[area] || 0) + 1;
-      });
-
-      const sortedZones = Object.entries(zoneCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
-      zoneChart.innerHTML = sortedZones.map(([zone, count]) => {
-        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
-        return `
-          <div style="margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; font-weight: 600; margin-bottom: 4px;">
-              <span>${zone}</span>
-              <span>${count}</span>
-            </div>
-            <div style="height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden;">
-              <div style="width: ${pct}%; height: 100%; background: #0f3e6d; border-radius: 5px;"></div>
-            </div>
+          <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: ${pct}%; background: #0f3e6d; border-radius: 4px;"></div>
           </div>
-        `;
-      }).join("");
-    }
-  }
-
-  function renderComplaintsTable(all) {
-    if (!tbody) return;
-
-    const filtered = all.filter(c => {
-      if (filters.dept !== "all" && c.deptCode !== filters.dept) return false;
-      if (filters.status !== "all" && c.status.toLowerCase() !== filters.status.toLowerCase()) return false;
-      if (filters.priority !== "all" && c.priority.toLowerCase() !== filters.priority.toLowerCase()) return false;
-      if (filters.search) {
-        const q = filters.search.toLowerCase();
-        const str = `${c.id} ${c.categoryLabel} ${c.location.address} ${c.location.area} ${c.citizenName}`.toLowerCase();
-        if (!str.includes(q)) return false;
-      }
-      return true;
-    });
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7" style="text-align: center; padding: 2rem; color: #94a3b8;">
-            <i class="fa-solid fa-inbox" style="font-size: 2rem; margin-bottom: 8px;"></i>
-            <p>No complaints match the specified department filters.</p>
-          </td>
-        </tr>
+        </div>
       `;
-      return;
-    }
+    }).join('');
+  }
 
-    tbody.innerHTML = filtered.map(c => `
+  if (zoneContainer) {
+    const zCounts = {};
+    adminComplaints.forEach(c => zCounts[c.zone] = (zCounts[c.zone] || 0) + 1);
+    const maxVal = Math.max(...Object.values(zCounts), 1);
+
+    zoneContainer.innerHTML = Object.entries(zCounts).map(([zone, count]) => {
+      const pct = Math.round((count / maxVal) * 100);
+      return `
+        <div style="margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; margin-bottom: 2px;">
+            <span style="font-weight: 600; color: #1e293b;">${zone}</span>
+            <span style="color: #64748b;">${count} complaints</span>
+          </div>
+          <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+            <div style="height: 100%; width: ${pct}%; background: #ea580c; border-radius: 4px;"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function renderAdminTable() {
+  const tbody = document.getElementById('adminComplaintsTbody');
+  if (!tbody) return;
+
+  const deptF = document.getElementById('adminDeptFilter')?.value || 'all';
+  const statusF = document.getElementById('adminStatusFilter')?.value || 'all';
+  const priorityF = document.getElementById('adminPriorityFilter')?.value || 'all';
+  const searchF = (document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+
+  let filtered = adminComplaints.filter(c => {
+    const matchDept = deptF === 'all' || c.deptCode === deptF;
+    const matchStatus = statusF === 'all' || c.status.toLowerCase() === statusF.toLowerCase();
+    const matchPriority = priorityF === 'all' || c.priority.toLowerCase() === priorityF.toLowerCase();
+    const matchSearch = !searchF || 
+      c.id.toLowerCase().includes(searchF) ||
+      c.location.toLowerCase().includes(searchF) ||
+      (c.citizenName && c.citizenName.toLowerCase().includes(searchF));
+    return matchDept && matchStatus && matchPriority && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #94a3b8;">No matching complaints in Kanpur departmental queue.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(c => {
+    const sSlug = c.status.toLowerCase().replace(' ', '-');
+    const pSlug = (c.priority || 'Medium').toLowerCase();
+    const dateFormatted = new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+    return `
       <tr>
         <td>
-          <a href="track.html?id=${c.id}" target="_blank" style="font-weight: 700; color: #0f3e6d;">
-            ${c.id}
-          </a>
-          <span style="display: block; font-size: 0.725rem; color: #64748b;">${window.formatDate(c.reportedDate)}</span>
+          <strong style="color: #0f3e6d; display: block;">${c.id}</strong>
+          <span style="font-size: 0.75rem; color: #64748b;">${dateFormatted}</span>
         </td>
         <td>
-          <strong>${c.categoryLabel}</strong>
-          <span style="display: block; font-size: 0.725rem; color: #64748b;">${c.deptCode}</span>
+          <div style="font-weight: 600; color: #0f172a;">${c.categoryTitle || c.category}</div>
+          <span style="font-size: 0.725rem; color: #0369a1; font-weight: 600;">${c.deptCode}</span>
         </td>
         <td>
-          <div style="max-width: 200px;">
-            <div style="font-weight: 600; font-size: 0.8125rem;">${c.location.area || "Kanpur"}</div>
-            <div style="font-size: 0.75rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.location.address}</div>
-          </div>
-        </td>
-        <td>${window.getPriorityBadgeHtml(c.priority)}</td>
-        <td>${window.getStatusBadgeHtml(c.status)}</td>
-        <td>
-          <div style="font-size: 0.8125rem;">${c.citizenName || "Citizen"}</div>
-          <div style="font-size: 0.725rem; color: #64748b;">${c.citizenPhone || "N/A"}</div>
+          <div style="font-size: 0.8125rem; color: #334155;">${c.location}</div>
+          <span style="font-size: 0.725rem; color: #64748b;">${c.ward} • ${c.zone}</span>
         </td>
         <td>
-          <button class="btn btn-sm btn-gov-navy take-action-btn" data-id="${c.id}">
+          <span class="priority-badge priority-${pSlug}">${c.priority}</span>
+        </td>
+        <td>
+          <span class="status-badge status-${sSlug}" style="font-size: 0.7rem; padding: 2px 8px;">${c.status}</span>
+        </td>
+        <td>
+          <div style="font-size: 0.8125rem; color: #0f172a;">${c.citizenName || 'Citizen'}</div>
+          <span style="font-size: 0.725rem; color: #64748b;">${c.citizenPhone || 'N/A'}</span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-navy" onclick="openAdminEditModal('${c.id}')">
             <i class="fa-solid fa-pen-to-square"></i> Action
           </button>
         </td>
       </tr>
-    `).join("");
+    `;
+  }).join('');
+}
 
-    // Bind action buttons
-    tbody.querySelectorAll(".take-action-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        openActionModal(btn.dataset.id);
-      });
+function initAdminFilters() {
+  ['adminDeptFilter', 'adminStatusFilter', 'adminPriorityFilter'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', renderAdminTable);
+  });
+  document.getElementById('adminSearchInput')?.addEventListener('input', renderAdminTable);
+
+  const resetDataBtn = document.getElementById('resetDemoDataBtn');
+  if (resetDataBtn) {
+    resetDataBtn.addEventListener('click', async () => {
+      if (confirm('Reset all demo complaints back to Kanpur initial data?')) {
+        try {
+          await fetch('/api/complaints/reset', { method: 'POST' });
+        } catch (e) {}
+        localStorage.removeItem('sudhaarsetu_complaints');
+        adminComplaints = getStoredComplaints();
+        renderAdminStats();
+        renderDistributionBars();
+        renderAdminTable();
+        alert('Data successfully reset!');
+      }
     });
   }
+}
 
-  // Open Action Modal
-  function openActionModal(id) {
-    const complaint = window.getComplaintById(id);
-    if (!complaint) return;
-    activeComplaint = complaint;
+function openAdminEditModal(id) {
+  const c = adminComplaints.find(item => item.id === id);
+  if (!c) return;
 
-    document.getElementById("modalComplaintId").textContent = complaint.id;
-    document.getElementById("modalIssueTitle").textContent = `${complaint.categoryLabel} - ${complaint.location.area}`;
-    document.getElementById("modalLocation").textContent = `${complaint.location.address} (${complaint.location.ward || ""})`;
-    document.getElementById("modalLandmark").textContent = complaint.location.landmark || "None specified";
-    document.getElementById("modalDescription").textContent = complaint.description;
-    document.getElementById("modalCitizen").textContent = `${complaint.citizenName} (${complaint.citizenPhone || "No phone"})`;
+  activeEditingId = id;
+  const modal = document.getElementById('actionModal');
+  if (!modal) return;
 
-    // Photo preview
-    const photoBox = document.getElementById("modalPhotoContainer");
-    if (photoBox) {
-      if (complaint.photoUrl) {
-        photoBox.innerHTML = `
-          <strong style="font-size: 0.8125rem; color: #475569; display: block; margin-bottom: 4px;">Incident Photo:</strong>
-          <img src="${complaint.photoUrl}" style="max-height: 140px; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;">
-        `;
-      } else {
-        photoBox.innerHTML = `<span style="font-size: 0.8125rem; color: #94a3b8;"><i class="fa-solid fa-image-slash"></i> No citizen photo attached</span>`;
-      }
-    }
+  document.getElementById('modalComplaintId').textContent = c.id;
+  document.getElementById('modalIssueTitle').textContent = c.categoryTitle || c.category;
+  document.getElementById('modalLocation').textContent = `${c.location} (${c.ward})`;
+  document.getElementById('modalLandmark').textContent = c.landmark || 'Not provided';
+  document.getElementById('modalDescription').textContent = c.description;
+  document.getElementById('modalCitizen').textContent = `${c.citizenName || 'Citizen'} (${c.citizenPhone || 'No phone'})`;
 
-    // Form inputs
-    const statusSelect = document.getElementById("modalStatusSelect");
-    const prioritySelect = document.getElementById("modalPrioritySelect");
-    const remarksInput = document.getElementById("modalRemarksInput");
-    const assignedInput = document.getElementById("modalAssignedInput");
+  document.getElementById('modalStatusSelect').value = c.status;
+  document.getElementById('modalPrioritySelect').value = c.priority;
+  document.getElementById('modalAssignedInput').value = c.assignedTo || '';
+  document.getElementById('modalRemarksInput').value = c.officialRemarks || '';
 
-    if (statusSelect) statusSelect.value = complaint.status;
-    if (prioritySelect) prioritySelect.value = complaint.priority;
-    if (remarksInput) remarksInput.value = complaint.remarks || "";
-    
-    // Find assigned officer if in timeline
-    const assignedEntry = (complaint.timeline || []).find(e => e.status === "Assigned");
-    if (assignedInput) {
-      assignedInput.value = assignedEntry ? assignedEntry.remarks : "Squad 4 (Eng. Amit Saxena)";
-    }
-
-    // Resolution Evidence Section
-    const resEvidenceRow = document.getElementById("modalResolutionEvidenceRow");
-    if (resEvidenceRow) {
-      toggleResolutionEvidence(statusSelect.value === "Resolved" || statusSelect.value === "Closed");
-    }
-
-    modal.classList.add("open");
+  // Show/Hide resolution photo picker
+  const resRow = document.getElementById('modalResolutionEvidenceRow');
+  if (resRow) {
+    resRow.style.display = c.status === 'Resolved' ? 'block' : 'none';
   }
 
-  function toggleResolutionEvidence(show) {
-    const row = document.getElementById("modalResolutionEvidenceRow");
-    if (row) row.style.display = show ? "block" : "none";
+  modal.classList.add('open');
+}
+
+function initModalListeners() {
+  const closeBtn = document.getElementById('actionModalClose');
+  const modal = document.getElementById('actionModal');
+  const saveBtn = document.getElementById('saveAdminChangesBtn');
+  const statusSelect = document.getElementById('modalStatusSelect');
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => modal.classList.remove('open'));
   }
 
-  const statusSelect = document.getElementById("modalStatusSelect");
   if (statusSelect) {
-    statusSelect.addEventListener("change", (e) => {
-      toggleResolutionEvidence(e.target.value === "Resolved" || e.target.value === "Closed");
+    statusSelect.addEventListener('change', (e) => {
+      const resRow = document.getElementById('modalResolutionEvidenceRow');
+      if (resRow) {
+        resRow.style.display = e.target.value === 'Resolved' ? 'block' : 'none';
+      }
     });
   }
 
-  // Close modal
-  if (modalCloseBtn) {
-    modalCloseBtn.addEventListener("click", () => modal.classList.remove("open"));
-  }
-  if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) modal.classList.remove("open");
-    });
-  }
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async () => {
+      if (!activeEditingId) return;
 
-  // Save changes
-  if (saveChangesBtn) {
-    saveChangesBtn.addEventListener("click", () => {
-      if (!activeComplaint) return;
+      const newStatus = document.getElementById('modalStatusSelect').value;
+      const newPriority = document.getElementById('modalPrioritySelect').value;
+      const assignedTo = document.getElementById('modalAssignedInput').value.trim();
+      const remarks = document.getElementById('modalRemarksInput').value.trim();
+      const resEvidence = document.getElementById('modalResEvidenceSelect').value;
 
-      const newStatus = document.getElementById("modalStatusSelect").value;
-      const newPriority = document.getElementById("modalPrioritySelect").value;
-      const newRemarks = document.getElementById("modalRemarksInput").value.trim();
-      const assignedTo = document.getElementById("modalAssignedInput").value.trim();
-      const resPhotoSelect = document.getElementById("modalResEvidenceSelect");
-
-      // Build updated timeline
-      const now = new Date();
-      const formattedDate = now.toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric"
-      }) + ", " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
-
-      const updatedTimeline = [...(activeComplaint.timeline || [])];
-
-      // Add timeline entry if status changed
-      if (newStatus !== activeComplaint.status) {
-        updatedTimeline.push({
-          status: newStatus,
-          title: `Status updated to ${newStatus}`,
-          date: formattedDate,
-          remarks: newRemarks || `Updated by authorized departmental nodal officer (${assignedTo})`
-        });
-      }
-
-      // Resolution evidence
-      let resolutionEvidence = activeComplaint.resolutionEvidence;
-      if (newStatus === "Resolved" || newStatus === "Closed") {
-        resolutionEvidence = {
-          resolvedDate: formattedDate,
-          officer: assignedTo || "Field Engineering Squad",
-          photoUrl: resPhotoSelect ? resPhotoSelect.value : "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=600&q=80"
-        };
-      }
-
-      window.updateComplaint(activeComplaint.id, {
+      const payload = {
         status: newStatus,
         priority: newPriority,
-        remarks: newRemarks,
-        timeline: updatedTimeline,
-        resolutionEvidence: resolutionEvidence
-      });
+        assignedTo,
+        officialRemarks: remarks,
+        resolutionPhotoUrl: newStatus === 'Resolved' ? resEvidence : undefined
+      };
 
-      modal.classList.remove("open");
-      renderDashboard();
-      window.showToast(`Complaint ${activeComplaint.id} updated successfully to ${newStatus}`, "success");
-    });
-  }
+      try {
+        await fetch(`/api/complaints/${activeEditingId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {}
 
-  // Filter Listeners
-  const deptFilter = document.getElementById("adminDeptFilter");
-  const statusFilter = document.getElementById("adminStatusFilter");
-  const priorityFilter = document.getElementById("adminPriorityFilter");
-  const searchInput = document.getElementById("adminSearchInput");
-
-  if (deptFilter) deptFilter.addEventListener("change", (e) => { filters.dept = e.target.value; renderDashboard(); });
-  if (statusFilter) statusFilter.addEventListener("change", (e) => { filters.status = e.target.value; renderDashboard(); });
-  if (priorityFilter) priorityFilter.addEventListener("change", (e) => { filters.priority = e.target.value; renderDashboard(); });
-  if (searchInput) searchInput.addEventListener("input", (e) => { filters.search = e.target.value.trim(); renderDashboard(); });
-
-  // Reset Demo Data button
-  const resetDemoBtn = document.getElementById("resetDemoDataBtn");
-  if (resetDemoBtn) {
-    resetDemoBtn.addEventListener("click", () => {
-      if (confirm("Reset all complaints back to default Kanpur seed records?")) {
-        localStorage.removeItem("sudhaarsetu_complaints");
-        localStorage.removeItem("sudhaarsetu_counter");
-        window.initStorage();
-        renderDashboard();
-        window.showToast("Demo complaints reloaded", "info");
+      // Update local array
+      const idx = adminComplaints.findIndex(c => c.id === activeEditingId);
+      if (idx !== -1) {
+        adminComplaints[idx] = {
+          ...adminComplaints[idx],
+          ...payload,
+          updatedAt: new Date().toISOString()
+        };
+        saveComplaintsToStorage(adminComplaints);
       }
+
+      modal.classList.remove('open');
+      renderAdminStats();
+      renderDistributionBars();
+      renderAdminTable();
+      alert(`Complaint ${activeEditingId} updated successfully.`);
     });
   }
-
-  renderDashboard();
-});
+}

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Your Complaint — SudhaarSetu Kanpur</title>
+  <meta name="description" content="Track your civic complaint status in Kanpur in real-time. View department progress timeline, field updates, and resolution evidence.">
+  <meta property="og:title" content="Track Your Complaint — SudhaarSetu Kanpur">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="gov-tricolor-strip"></div>
+
+  <!-- Top Gov Utility Bar -->
+  <div class="gov-top-bar">
+    <div class="container">
+      <div class="gov-badge">
+        <i class="fa-solid fa-landmark"></i>
+        <span>Public Grievance Redressal Tracking • Kanpur Nagar</span>
+        <span class="gov-badge-tag">Civic Prototype</span>
+      </div>
+      <div class="gov-top-actions">
+        <div class="font-resizer">
+          <span style="font-size: 0.75rem; color: #94a3b8;">Text Size:</span>
+          <button class="font-btn" data-size="small" onclick="setFontSize('small')">A-</button>
+          <button class="font-btn active" data-size="normal" onclick="setFontSize('normal')">A</button>
+          <button class="font-btn" data-size="large" onclick="setFontSize('large')">A+</button>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+          <span style="color: rgba(255,255,255,0.4);">|</span>
+          <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-group">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">Sudhaar<span>Setu</span></span>
+          <span class="brand-sub">Civic Issue Management for Kanpur</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="report.html" class="nav-link">
+          <i class="fa-solid fa-file-circle-plus"></i> Report Issue
+        </a>
+        <a href="track.html" class="nav-link active">
+          <i class="fa-solid fa-magnifying-glass-location"></i> Track Status
+        </a>
+        <a href="map.html" class="nav-link">
+          <i class="fa-solid fa-map-location-dot"></i> Issues Map
+        </a>
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i> My Dashboard
+        </a>
+        <a href="admin.html" class="nav-link" style="color: #ffb366;">
+          <i class="fa-solid fa-lock"></i> Dept Login
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="report.html" class="btn btn-primary">
+          <i class="fa-solid fa-bullhorn"></i> Report an Issue
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="gov-breadcrumb-bar">
+    <div class="container">
+      <ul class="breadcrumb">
+        <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li>Citizen Grievance Redressal</li>
+        <li class="breadcrumb-separator">/</li>
+        <li style="color: #0f172a; font-weight: 600;">Track Your Complaint</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="content-wrapper">
+    <div class="container">
+      <!-- Search Box Card -->
+      <div class="track-search-card">
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <span class="section-tag">Status Tracking Portal</span>
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: #0f3e6d; margin: 6px 0;">
+            Track Your Complaint Status
+          </h1>
+          <p style="font-size: 0.95rem; color: #64748b; max-width: 520px; margin: 0 auto;">
+            Enter your unique Kanpur Complaint ID received during grievance submission to view real-time department progress.
+          </p>
+        </div>
+
+        <div class="search-input-group">
+          <input 
+            type="text" 
+            id="trackComplaintInput" 
+            class="form-control" 
+            placeholder="e.g. SS-KNP-2026-001245" 
+            value="SS-KNP-2026-001245"
+            autocomplete="off"
+          >
+          <button type="button" id="trackSubmitBtn" class="btn btn-primary" style="padding: 0 1.5rem; font-size: 1rem; white-space: nowrap;">
+            <i class="fa-solid fa-magnifying-glass"></i> Track Status
+          </button>
+        </div>
+
+        <div class="quick-sample-ids">
+          <i class="fa-solid fa-lightbulb" style="color: #ff9933;"></i> Try sample demo tickets:
+          <span class="quick-id-link" data-id="SS-KNP-2026-001245">SS-KNP-2026-001245 (Pothole)</span> •
+          <span class="quick-id-link" data-id="SS-KNP-2026-001246">SS-KNP-2026-001246 (Garbage)</span> •
+          <span class="quick-id-link" data-id="SS-KNP-2026-001247">SS-KNP-2026-001247 (Resolved Light)</span> •
+          <span class="quick-id-link" data-id="SS-KNP-2026-001248">SS-KNP-2026-001248 (Water Leak)</span>
+        </div>
+      </div>
+
+      <!-- NOT FOUND CONTAINER -->
+      <div id="trackingNotFoundContainer" style="display: none; max-width: 680px; margin: 2rem auto; background: white; border: 1px solid #fee2e2; border-radius: 8px; padding: 2rem; text-align: center;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 2.5rem; color: #dc2626; margin-bottom: 1rem;"></i>
+        <h3 style="color: #991b1b; margin-bottom: 6px;">Complaint Not Found</h3>
+        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1rem;">
+          No grievance record exists with ID: <strong id="searchedIdDisplay" style="color: #0f172a;"></strong>.
+        </p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1.5rem;">
+          Please ensure you have entered the full ID including prefix (e.g. SS-KNP-2026-001245).
+        </p>
+        <a href="report.html" class="btn btn-outline-navy">
+          <i class="fa-solid fa-bullhorn"></i> File a New Complaint
+        </a>
+      </div>
+
+      <!-- TRACKING RESULT CONTAINER -->
+      <div id="trackingResultContainer" class="tracking-result-card" style="display: none;">
+        <!-- Header Strip -->
+        <div class="tracking-result-header">
+          <div>
+            <span style="font-size: 0.8125rem; color: #93c5fd; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">
+              Grievance Record
+            </span>
+            <h2 id="trackDispId" style="font-size: 1.5rem; font-weight: 800; margin: 2px 0;">
+              SS-KNP-2026-001245
+            </h2>
+            <span id="trackDispDate" style="font-size: 0.8125rem; color: #e2e8f0;">
+              Reported: 24 Oct 2026
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="trackStatusBadge">
+              <!-- Status pill -->
+            </div>
+            <button type="button" id="printReceiptBtn" class="btn btn-sm btn-outline-gov" title="Print acknowledgment">
+              <i class="fa-solid fa-print"></i> Print Receipt
+            </button>
+          </div>
+        </div>
+
+        <!-- Timeline Section -->
+        <div class="timeline-container">
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f3e6d;">
+              <i class="fa-solid fa-timeline"></i> Department Resolution Timeline
+            </h3>
+            <p style="font-size: 0.85rem; color: #64748b;">
+              Tracking steps from registration through field inspection and final work verification.
+            </p>
+          </div>
+
+          <ol class="civic-timeline" id="civicTimelineList">
+            <!-- Timeline steps rendered via js/track.js -->
+          </ol>
+        </div>
+
+        <!-- Complaint Details Summary -->
+        <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 2rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f3e6d; margin-bottom: 1rem;">
+            <i class="fa-solid fa-circle-info"></i> Complaint Particulars
+          </h3>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <div>
+              <div style="font-size: 0.8125rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Issue Category</div>
+              <div id="trackCategory" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin-bottom: 10px;">Pothole</div>
+
+              <div style="font-size: 0.8125rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Concerned Department</div>
+              <div id="trackDept" style="font-size: 1rem; font-weight: 700; color: #ea580c; margin-bottom: 10px;">Road / Public Works Department</div>
+
+              <div style="font-size: 0.8125rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Priority Level</div>
+              <div id="trackPriority" style="margin-bottom: 10px;">
+                <!-- Priority badge -->
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.8125rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Location in Kanpur</div>
+              <div id="trackLocation" style="font-size: 0.95rem; font-weight: 600; color: #0f172a; margin-bottom: 10px;">
+                GT Road near Kalyanpur Crossing (Ward 31)
+              </div>
+
+              <div style="font-size: 0.8125rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Nearby Landmark</div>
+              <div id="trackLandmark" style="font-size: 0.9rem; color: #334155; margin-bottom: 10px;">
+                Near Kalyanpur Railway Crossing
+              </div>
+
+              <div style="font-size: 0.8125rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Citizen Description</div>
+              <div id="trackDescription" style="font-size: 0.9rem; color: #334155; line-height: 1.4; background: white; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                Deep pothole on main road.
+              </div>
+            </div>
+          </div>
+
+          <!-- Citizen Uploaded Photo -->
+          <div id="trackPhotoBox"></div>
+
+          <!-- Resolution Evidence Box (Visible if status is Resolved) -->
+          <div id="resolutionEvidenceBox" style="display: none;"></div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <a href="dashboard.html" class="btn btn-outline-navy">
+            <i class="fa-solid fa-arrow-left"></i> My Grievances
+          </a>
+          <a href="map.html" class="btn btn-gov-navy">
+            <i class="fa-solid fa-map-location-dot"></i> View on Kanpur Map
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-bottom">
+      <div>
+        © 2026 SudhaarSetu — Civic-Tech Prototype for Kanpur, Uttar Pradesh.
+      </div>
+      <div>
+        Helpline: <strong>1533</strong> • Emergency: <strong>112</strong>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/script.js"></script>
+  <script src="/js/track.js"></script>
+</body>
+</html>
