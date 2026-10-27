@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department & Admin Dashboard — SudhaarSetu Kanpur</title>
+  <meta name="description" content="Municipal Department Officer portal for Kanpur Nagar. Triage civic complaints, assign field engineering squads, update statuses, and log resolution evidence.">
+  <meta property="og:title" content="Department Dashboard — SudhaarSetu Kanpur">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="gov-tricolor-strip"></div>
+
+  <!-- Top Gov Utility Bar -->
+  <div class="gov-top-bar" style="background-color: #071e33;">
+    <div class="container">
+      <div class="gov-badge">
+        <i class="fa-solid fa-building-columns"></i>
+        <span>Government Department Portal • Kanpur Nagar Civic Redressal</span>
+        <span class="gov-badge-tag" style="background: rgba(22, 163, 74, 0.25); color: #4ade80;">Authorized Officer Console</span>
+      </div>
+      <div class="gov-top-actions">
+        <span style="font-size: 0.775rem; color: #cbd5e1;">Logged in as: <strong>Nodal Officer (Kanpur Nagar)</strong></span>
+        <button id="resetDemoDataBtn" class="font-btn" style="background: rgba(220, 38, 38, 0.3); border-color: #f87171;" title="Reset all complaints back to default Kanpur seed data">
+          <i class="fa-solid fa-rotate-left"></i> Reset Demo Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header" style="background-color: #092746;">
+    <div class="header-container">
+      <a href="index.html" class="brand-group">
+        <div class="brand-logo-icon" style="border-color: #4ade80;">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">Sudhaar<span>Setu</span> <span style="font-size: 0.85rem; font-weight: 500; color: #4ade80;">[Admin Console]</span></span>
+          <span class="brand-sub">Kanpur Municipal Department Grievance Operations</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">
+          <i class="fa-solid fa-house"></i> Public Home
+        </a>
+        <a href="report.html" class="nav-link">
+          <i class="fa-solid fa-file-circle-plus"></i> Citizen Form
+        </a>
+        <a href="track.html" class="nav-link">
+          <i class="fa-solid fa-magnifying-glass-location"></i> Track Status
+        </a>
+        <a href="map.html" class="nav-link">
+          <i class="fa-solid fa-map-location-dot"></i> Issues Map
+        </a>
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i> Citizen Dash
+        </a>
+        <a href="admin.html" class="nav-link active" style="color: #4ade80;">
+          <i class="fa-solid fa-user-shield"></i> Dept Console
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-outline-gov btn-sm">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Exit to Citizen View
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="gov-breadcrumb-bar">
+    <div class="container">
+      <ul class="breadcrumb">
+        <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li>Department Administration</li>
+        <li class="breadcrumb-separator">/</li>
+        <li style="color: #0f172a; font-weight: 600;">Grievance Triage & Resolution Operations</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="content-wrapper">
+    <div class="container" style="padding-top: 1.75rem;">
+      <!-- Title & Disclaimer -->
+      <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="section-tag" style="background: #dcfce7; color: #15803d;">
+            <i class="fa-solid fa-shield"></i> Department Operational Control
+          </span>
+          <h1 style="font-size: 1.85rem; font-weight: 800; color: #0f3e6d; margin: 4px 0;">
+            Kanpur Municipal Department / Admin Dashboard
+          </h1>
+          <p style="font-size: 0.9rem; color: #64748b;">
+            Authorized console for Public Works, Sanitation (SWM), Streetlights, and Kanpur Jal Sansthan nodal officers.
+          </p>
+        </div>
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 6px 12px; font-size: 0.8125rem; color: #92400e;">
+          <i class="fa-solid fa-circle-info"></i> Prototype Mode: Changes made here instantly update citizen tracking.
+        </div>
+      </div>
+
+      <!-- Complaint Statistics Grid -->
+      <div class="stats-cards-grid">
+        <div class="stat-card total">
+          <div class="stat-card-icon"><i class="fa-solid fa-inbox"></i></div>
+          <div>
+            <div class="stat-card-value" id="adminTotalCount">5</div>
+            <div class="stat-card-label">Total Complaints</div>
+          </div>
+        </div>
+
+        <div class="stat-card pending">
+          <div class="stat-card-icon"><i class="fa-solid fa-bell"></i></div>
+          <div>
+            <div class="stat-card-value" id="adminNewCount">1</div>
+            <div class="stat-card-label">New / Unassigned</div>
+          </div>
+        </div>
+
+        <div class="stat-card progress">
+          <div class="stat-card-icon"><i class="fa-solid fa-person-digging"></i></div>
+          <div>
+            <div class="stat-card-value" id="adminProgressCount">1</div>
+            <div class="stat-card-label">In Progress / Squad Active</div>
+          </div>
+        </div>
+
+        <div class="stat-card resolved">
+          <div class="stat-card-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div>
+            <div class="stat-card-value" id="adminResolvedCount">1</div>
+            <div class="stat-card-label">Resolved Issues</div>
+          </div>
+        </div>
+
+        <div class="stat-card high">
+          <div class="stat-card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div>
+            <div class="stat-card-value" id="adminHighPriorityCount" style="color: #dc2626;">3</div>
+            <div class="stat-card-label">High Priority Hazards</div>
+          </div>
+        </div>
+
+        <div class="stat-card resolved">
+          <div class="stat-card-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fa-solid fa-chart-line"></i></div>
+          <div>
+            <div class="stat-card-value" id="adminResolutionRate" style="color: #0284c7;">88%</div>
+            <div class="stat-card-label">City Resolution Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Government-Report Style Analytics Row -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Complaints by Department -->
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1.25rem; box-shadow: var(--shadow-sm);">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #0f3e6d; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-chart-simple"></i> Grievances by Department Division
+          </h3>
+          <div id="adminCategoryBars">
+            <!-- Rendered by js/admin.js -->
+          </div>
+        </div>
+
+        <!-- Complaints by Kanpur Area / Zone -->
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1.25rem; box-shadow: var(--shadow-sm);">
+          <h3 style="font-size: 1rem; font-weight: 700; color: #0f3e6d; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-city"></i> Grievances by Kanpur Zones
+          </h3>
+          <div id="adminZoneBars">
+            <!-- Rendered by js/admin.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Complaints Management Table Section -->
+      <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin: 0;">
+            <i class="fa-solid fa-table-list"></i> Kanpur Civic Complaints Queue
+          </h2>
+          <span style="font-size: 0.8125rem; color: #64748b;">
+            Click on any complaint row or <strong>Action</strong> to update status and evidence.
+          </span>
+        </div>
+
+        <!-- Table Filters Toolbar -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 1.25rem; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Department Filter</label>
+            <select id="adminDeptFilter" class="form-control" style="font-size: 0.8125rem; padding: 4px 8px;">
+              <option value="all">All Departments</option>
+              <option value="PWD-ROAD">Road / PWD (PWD-ROAD)</option>
+              <option value="SWM-SAN">Sanitation / SWM (SWM-SAN)</option>
+              <option value="ELEC-LIGHT">Electrical / Streetlights</option>
+              <option value="KJS-WATER">Kanpur Jal Sansthan</option>
+              <option value="DRAIN-SEWER">Drainage & Sewerage</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Status Filter</label>
+            <select id="adminStatusFilter" class="form-control" style="font-size: 0.8125rem; padding: 4px 8px;">
+              <option value="all">All Statuses</option>
+              <option value="Registered">Registered</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Assigned">Assigned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Priority Filter</label>
+            <select id="adminPriorityFilter" class="form-control" style="font-size: 0.8125rem; padding: 4px 8px;">
+              <option value="all">All Priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.75rem; font-weight: 700; color: #475569; display: block; margin-bottom: 2px;">Search ID / Citizen</label>
+            <input type="text" id="adminSearchInput" class="form-control" placeholder="Search by ID, Area, Citizen..." style="font-size: 0.8125rem; padding: 4px 8px;">
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Complaint ID / Date</th>
+                <th>Issue / Dept</th>
+                <th>Kanpur Area / Address</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Citizen Contact</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminComplaintsTbody">
+              <!-- Rendered via js/admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- DEPARTMENT ACTION & RESOLUTION MODAL -->
+  <div class="modal-overlay" id="actionModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-pen-to-square"></i> Department Action: <span id="modalComplaintId">SS-KNP-2026-001245</span>
+        </h3>
+        <button type="button" class="modal-close" id="actionModalClose" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 1.25rem;">
+          <h4 id="modalIssueTitle" style="color: #0f3e6d; font-size: 1.05rem; margin-bottom: 4px;">Pothole - Kalyanpur</h4>
+          <div style="font-size: 0.8125rem; color: #475569; margin-bottom: 4px;">
+            <i class="fa-solid fa-location-dot" style="color: #ea580c;"></i> <span id="modalLocation">GT Road near Kalyanpur Crossing (Ward 31)</span>
+          </div>
+          <div style="font-size: 0.8125rem; color: #64748b; margin-bottom: 6px;">
+            <strong>Landmark:</strong> <span id="modalLandmark">Near Kalyanpur Railway Crossing</span>
+          </div>
+          <div style="font-size: 0.85rem; color: #1e293b; background: white; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 8px;">
+            <strong>Citizen Description:</strong> <span id="modalDescription">Deep pothole on main road.</span>
+          </div>
+          <div style="font-size: 0.775rem; color: #64748b;">
+            <strong>Filed By:</strong> <span id="modalCitizen">Rakesh Verma (98390XXXXX)</span>
+          </div>
+        </div>
+
+        <!-- Incident Photo -->
+        <div id="modalPhotoContainer" style="margin-bottom: 1.25rem;"></div>
+
+        <!-- Status & Priority Edit Form -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="modalStatusSelect">Update Status</label>
+            <select id="modalStatusSelect" class="form-control">
+              <option value="Registered">Registered</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Assigned">Assigned to Field Squad</option>
+              <option value="In Progress">Work in Progress</option>
+              <option value="Resolved">Resolved (Work Completed)</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="modalPrioritySelect">Adjust Priority</label>
+            <select id="modalPrioritySelect" class="form-control">
+              <option value="High">High (Immediate Safety)</option>
+              <option value="Medium">Medium (Standard)</option>
+              <option value="Low">Low (Routine)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Assign Field Team / Officer -->
+        <div class="form-group">
+          <label class="form-label" for="modalAssignedInput">Assign Field Squad / Nodal Officer</label>
+          <input type="text" id="modalAssignedInput" class="form-control" placeholder="e.g. Squad 4 (Eng. Amit Saxena), Lineman Ram Babu...">
+        </div>
+
+        <!-- Official Remarks -->
+        <div class="form-group">
+          <label class="form-label" for="modalRemarksInput">Official Department Remarks / Action Notes</label>
+          <textarea id="modalRemarksInput" class="form-control" rows="2" placeholder="Enter inspection notes, asphalt batch dispatched, compactor round status, etc..."></textarea>
+        </div>
+
+        <!-- Resolution Evidence Section (Visible when status is Resolved) -->
+        <div id="modalResolutionEvidenceRow" style="display: none; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px; margin-top: 10px;">
+          <strong style="color: #166534; font-size: 0.9rem; display: block; margin-bottom: 6px;">
+            <i class="fa-solid fa-camera"></i> Resolution Evidence (Before vs After Photo)
+          </strong>
+          <p style="font-size: 0.775rem; color: #14532d; margin-bottom: 8px;">
+            Attach photographic verification of repaired road, illuminated light, or cleared waste.
+          </p>
+          <label class="form-label" style="font-size: 0.8125rem;">Select Resolution Proof Sample:</label>
+          <select id="modalResEvidenceSelect" class="form-control" style="font-size: 0.85rem;">
+            <option value="https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=600&q=80">Repaired Asphalt & Level Road Surface (Verified)</option>
+            <option value="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80">Cleaned & Sanitized Public Street (Verified)</option>
+            <option value="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=600&q=80">New Working LED Luminaire Installed (Verified)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-navy" onclick="document.getElementById('actionModal').classList.remove('open')">
+          Cancel
+        </button>
+        <button type="button" id="saveAdminChangesBtn" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> Save & Dispatch Updates
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-bottom">
+      <div>
+        © 2026 SudhaarSetu — Municipal Operations Console for Kanpur, UP.
+      </div>
+      <div>
+        Internal Civic-Tech Admin Prototype
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/script.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

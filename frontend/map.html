@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Civic Issues Map — SudhaarSetu Kanpur</title>
+  <meta name="description" content="Interactive civic issues map of Kanpur city. View reported potholes, garbage, streetlights, and drainage issues with live status across wards.">
+  <meta property="og:title" content="Civic Issues Map — SudhaarSetu Kanpur">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="gov-tricolor-strip"></div>
+
+  <!-- Top Gov Utility Bar -->
+  <div class="gov-top-bar">
+    <div class="container">
+      <div class="gov-badge">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>Kanpur Nagar Geographic Information System (GIS) • Civic Map</span>
+        <span class="gov-badge-tag">Civic Prototype</span>
+      </div>
+      <div class="gov-top-actions">
+        <div class="font-resizer">
+          <span style="font-size: 0.75rem; color: #94a3b8;">Text Size:</span>
+          <button class="font-btn" data-size="small" onclick="setFontSize('small')">A-</button>
+          <button class="font-btn active" data-size="normal" onclick="setFontSize('normal')">A</button>
+          <button class="font-btn" data-size="large" onclick="setFontSize('large')">A+</button>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+          <span style="color: rgba(255,255,255,0.4);">|</span>
+          <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-group">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">Sudhaar<span>Setu</span></span>
+          <span class="brand-sub">Civic Issue Management for Kanpur</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="report.html" class="nav-link">
+          <i class="fa-solid fa-file-circle-plus"></i> Report Issue
+        </a>
+        <a href="track.html" class="nav-link">
+          <i class="fa-solid fa-magnifying-glass-location"></i> Track Status
+        </a>
+        <a href="map.html" class="nav-link active">
+          <i class="fa-solid fa-map-location-dot"></i> Issues Map
+        </a>
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i> My Dashboard
+        </a>
+        <a href="admin.html" class="nav-link" style="color: #ffb366;">
+          <i class="fa-solid fa-lock"></i> Dept Login
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="report.html" class="btn btn-primary">
+          <i class="fa-solid fa-bullhorn"></i> Report an Issue
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Split Map Layout -->
+  <div class="map-page-layout">
+    <!-- Left Sidebar: Filters & Issue List -->
+    <aside class="map-sidebar">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="font-size: 1.15rem; font-weight: 700; color: #0f3e6d; margin: 0;">
+          <i class="fa-solid fa-filter"></i> Civic Filters
+        </h2>
+        <span id="filteredCountBadge" style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-weight: 700;">
+          5 Issues Found
+        </span>
+      </div>
+
+      <!-- Filter: Issue Type -->
+      <div class="filter-section-title">Issue Category</div>
+      <div class="filter-pills-row">
+        <button type="button" class="filter-btn filter-cat-btn active" data-category="all">All</button>
+        <button type="button" class="filter-btn filter-cat-btn" data-category="pothole">Potholes</button>
+        <button type="button" class="filter-btn filter-cat-btn" data-category="garbage">Garbage</button>
+        <button type="button" class="filter-btn filter-cat-btn" data-category="streetlight">Streetlight</button>
+        <button type="button" class="filter-btn filter-cat-btn" data-category="water">Water</button>
+        <button type="button" class="filter-btn filter-cat-btn" data-category="drainage">Drainage</button>
+      </div>
+
+      <!-- Filter: Status -->
+      <div class="filter-section-title">Resolution Status</div>
+      <div class="filter-pills-row">
+        <button type="button" class="filter-btn filter-status-btn active" data-status="all">All</button>
+        <button type="button" class="filter-btn filter-status-btn" data-status="registered">Registered</button>
+        <button type="button" class="filter-btn filter-status-btn" data-status="in progress">In Progress</button>
+        <button type="button" class="filter-btn filter-status-btn" data-status="resolved">Resolved</button>
+      </div>
+
+      <!-- Filter: Priority -->
+      <div class="filter-section-title">Priority Level</div>
+      <div class="filter-pills-row">
+        <button type="button" class="filter-btn filter-priority-btn active" data-priority="all">All</button>
+        <button type="button" class="filter-btn filter-priority-btn" data-priority="high">High</button>
+        <button type="button" class="filter-btn filter-priority-btn" data-priority="medium">Medium</button>
+        <button type="button" class="filter-btn filter-priority-btn" data-priority="low">Low</button>
+      </div>
+
+      <!-- Filter: Kanpur Area -->
+      <div class="filter-section-title">Kanpur Locality / Ward</div>
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <select id="mapAreaFilter" class="form-control" style="font-size: 0.85rem; padding: 6px 10px;">
+          <!-- Filled by js/map.js -->
+        </select>
+      </div>
+
+      <button type="button" id="resetFiltersBtn" class="btn btn-sm btn-outline-navy" style="width: 100%; margin-bottom: 1.25rem;">
+        <i class="fa-solid fa-arrows-rotate"></i> Reset All Filters
+      </button>
+
+      <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-bottom: 1rem;">
+
+      <!-- List of Active Map Issues -->
+      <div style="font-size: 0.8125rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 8px;">
+        <i class="fa-solid fa-list-check"></i> Kanpur Grievances List
+      </div>
+      <div id="mapIssuesList">
+        <!-- Rendered by js/map.js -->
+      </div>
+    </aside>
+
+    <!-- Right Side: Full Screen Interactive Map -->
+    <main class="map-view-area">
+      <div id="civicFullMap"></div>
+
+      <!-- Floating Legend Overlay -->
+      <div style="position: absolute; bottom: 20px; right: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; font-size: 0.775rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 280px;">
+        <strong style="color: #0f3e6d; display: block; margin-bottom: 6px;">Marker Categories</strong>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+          <span><span style="color: #ea580c; font-size: 1rem;">●</span> Pothole (PWD)</span>
+          <span><span style="color: #16a34a; font-size: 1rem;">●</span> Garbage (SWM)</span>
+          <span><span style="color: #ca8a04; font-size: 1rem;">●</span> Streetlight (Elec)</span>
+          <span><span style="color: #0284c7; font-size: 1rem;">●</span> Water (Jal Sansthan)</span>
+          <span><span style="color: #7c3aed; font-size: 1rem;">●</span> Drainage/Sewer</span>
+          <span><span style="color: #64748b; font-size: 1rem;">●</span> General Works</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Leaflet Map JS Fallback Engine -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Google Maps API Configuration Script -->
+  <!-- 
+    Replace YOUR_GOOGLE_MAPS_API_KEY with your key if connecting to Google Maps Platform.
+    OpenStreetMap/Leaflet fallback is active by default.
+  -->
+  <script>
+    window.GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+  </script>
+
+  <!-- Scripts -->
+  <script src="/js/script.js"></script>
+  <script src="/js/map.js"></script>
+</body>
+</html>
