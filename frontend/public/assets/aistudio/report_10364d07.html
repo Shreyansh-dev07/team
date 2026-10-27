@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report a Civic Issue — SudhaarSetu Kanpur</title>
+  <meta name="description" content="Report potholes, garbage, streetlights, and water problems in Kanpur. Multi-step citizen grievance form with location and automated department routing.">
+  <meta property="og:title" content="Report a Civic Issue — SudhaarSetu Kanpur">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet Map CSS for interactive location picker fallback -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="gov-tricolor-strip"></div>
+
+  <!-- Top Gov Utility Bar -->
+  <div class="gov-top-bar">
+    <div class="container">
+      <div class="gov-badge">
+        <i class="fa-solid fa-landmark"></i>
+        <span>Civic Grievance Registration • Kanpur Nagar</span>
+        <span class="gov-badge-tag">Civic Prototype</span>
+      </div>
+      <div class="gov-top-actions">
+        <div class="font-resizer">
+          <span style="font-size: 0.75rem; color: #94a3b8;">Text Size:</span>
+          <button class="font-btn" data-size="small" onclick="setFontSize('small')">A-</button>
+          <button class="font-btn active" data-size="normal" onclick="setFontSize('normal')">A</button>
+          <button class="font-btn" data-size="large" onclick="setFontSize('large')">A+</button>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+          <span style="color: rgba(255,255,255,0.4);">|</span>
+          <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-group">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">Sudhaar<span>Setu</span></span>
+          <span class="brand-sub">Civic Issue Management for Kanpur</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="report.html" class="nav-link active">
+          <i class="fa-solid fa-file-circle-plus"></i> Report Issue
+        </a>
+        <a href="track.html" class="nav-link">
+          <i class="fa-solid fa-magnifying-glass-location"></i> Track Status
+        </a>
+        <a href="map.html" class="nav-link">
+          <i class="fa-solid fa-map-location-dot"></i> Issues Map
+        </a>
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i> My Dashboard
+        </a>
+        <a href="admin.html" class="nav-link" style="color: #ffb366;">
+          <i class="fa-solid fa-lock"></i> Dept Login
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="track.html" class="btn btn-outline-gov">
+          <i class="fa-solid fa-magnifying-glass"></i> Track Complaint
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="gov-breadcrumb-bar">
+    <div class="container">
+      <ul class="breadcrumb">
+        <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li>Citizen Grievance Redressal</li>
+        <li class="breadcrumb-separator">/</li>
+        <li style="color: #0f172a; font-weight: 600;">Report a Civic Issue</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="content-wrapper">
+    <div class="container report-container">
+      <div class="report-card">
+        <!-- Form Top Header -->
+        <div class="report-header">
+          <div>
+            <h1 style="font-size: 1.45rem; font-weight: 700; margin-bottom: 4px;">
+              <i class="fa-solid fa-clipboard-question"></i> Report a Civic Issue
+            </h1>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin: 0;">
+              Public grievance submission form for citizens of Kanpur Nagar, UP.
+            </p>
+          </div>
+          <span style="background: rgba(255, 153, 51, 0.2); color: #ffb366; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(255, 153, 51, 0.4);">
+            CIVIC STEP WIZARD
+          </span>
+        </div>
+
+        <!-- Step Indicator Bar -->
+        <div class="report-step-indicator">
+          <div class="step-pill active" data-step="1">
+            <span class="step-pill-num">1</span>
+            <span>Select Issue</span>
+          </div>
+          <div class="step-pill" data-step="2">
+            <span class="step-pill-num">2</span>
+            <span>Upload Photo</span>
+          </div>
+          <div class="step-pill" data-step="3">
+            <span class="step-pill-num">3</span>
+            <span>Share Location</span>
+          </div>
+          <div class="step-pill" data-step="4">
+            <span class="step-pill-num">4</span>
+            <span>Describe Problem</span>
+          </div>
+          <div class="step-pill" data-step="5">
+            <span class="step-pill-num">5</span>
+            <span>Review & Route</span>
+          </div>
+        </div>
+
+        <!-- FORM STEPS WRAPPER -->
+        <div class="form-step-content">
+
+          <!-- ============================================== -->
+          <!-- STEP 1: SELECT ISSUE -->
+          <!-- ============================================== -->
+          <div class="step-block active" data-step="1">
+            <div style="margin-bottom: 1.5rem;">
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin-bottom: 4px;">
+                What problem are you reporting?
+              </h2>
+              <p style="font-size: 0.9rem; color: #64748b;">
+                Select the primary category of civic infrastructure failure in your area.
+              </p>
+            </div>
+
+            <div class="issue-selector-grid">
+              <!-- Road Crack -->
+              <div class="issue-option-card" data-category="road_crack">
+                <div class="opt-icon"><i class="fa-solid fa-car-burst"></i></div>
+                <div class="opt-title">Road Crack</div>
+                <div class="opt-dept">Public Works Dept</div>
+              </div>
+
+              <!-- Pothole -->
+              <div class="issue-option-card" data-category="pothole">
+                <div class="opt-icon"><i class="fa-solid fa-road"></i></div>
+                <div class="opt-title">Pothole</div>
+                <div class="opt-dept">Public Works Dept</div>
+              </div>
+
+              <!-- Garbage Pile -->
+              <div class="issue-option-card" data-category="garbage">
+                <div class="opt-icon"><i class="fa-solid fa-trash-can"></i></div>
+                <div class="opt-title">Garbage Pile</div>
+                <div class="opt-dept">Sanitation & SWM</div>
+              </div>
+
+              <!-- Broken Streetlight -->
+              <div class="issue-option-card" data-category="streetlight">
+                <div class="opt-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                <div class="opt-title">Broken Streetlight</div>
+                <div class="opt-dept">Electrical Dept</div>
+              </div>
+
+              <!-- Water Problem -->
+              <div class="issue-option-card" data-category="water">
+                <div class="opt-icon"><i class="fa-solid fa-faucet-drip"></i></div>
+                <div class="opt-title">Water Problem</div>
+                <div class="opt-dept">Kanpur Jal Sansthan</div>
+              </div>
+
+              <!-- Drainage Problem -->
+              <div class="issue-option-card" data-category="drainage">
+                <div class="opt-icon"><i class="fa-solid fa-water"></i></div>
+                <div class="opt-title">Drainage Problem</div>
+                <div class="opt-dept">Drainage & Sewerage</div>
+              </div>
+
+              <!-- Other -->
+              <div class="issue-option-card" data-category="other">
+                <div class="opt-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="opt-title">Other Civic Issue</div>
+                <div class="opt-dept">General Civic Works</div>
+              </div>
+            </div>
+
+            <!-- Department Routing Dynamic Info Preview -->
+            <div class="dept-routing-banner">
+              <div class="dept-routing-title">
+                <i class="fa-solid fa-route"></i> Automatic Government Department Routing
+              </div>
+              <div class="dept-routing-name" id="routedDeptName">
+                Road / Public Works Department
+              </div>
+              <div class="dept-routing-sub" id="routedDeptOfficer">
+                Nodal Officer: Executive Engineer (Roads & Highways)
+              </div>
+              <div class="dept-routing-sub" id="routedDeptEst" style="color: #0369a1; font-weight: 600;">
+                Estimated Resolution: Within 3 business days
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STEP 2: UPLOAD PHOTO & AI ANALYSIS -->
+          <!-- ============================================== -->
+          <div class="step-block" data-step="2">
+            <div style="margin-bottom: 1.25rem;">
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin-bottom: 4px;">
+                Upload Photo of the Civic Issue
+              </h2>
+              <p style="font-size: 0.9rem; color: #64748b;">
+                Upload a clear photo of the issue to help the concerned department understand the problem.
+              </p>
+            </div>
+
+            <input type="file" id="issuePhotoInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+
+            <!-- Photo Upload Zone -->
+            <div class="photo-upload-zone" id="photoDropZone">
+              <div class="upload-icon-circle">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <h4 style="font-size: 1.05rem; margin-bottom: 6px; color: #0f172a;">Click to Upload or Drag and Drop Photo</h4>
+              <p style="font-size: 0.8125rem; color: #64748b; margin-bottom: 1rem;">Supports JPG, JPEG, and PNG files up to 10MB</p>
+              
+              <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-sm btn-gov-navy" onclick="document.getElementById('issuePhotoInput').click()">
+                  <i class="fa-solid fa-upload"></i> Upload Photo
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-navy" onclick="document.getElementById('issuePhotoInput').click()">
+                  <i class="fa-solid fa-camera"></i> Take Photo
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Demo Sample Photos -->
+            <div style="margin-top: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;">
+              <span style="font-size: 0.8125rem; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: #ff9933;"></i> Quick Demo: Test with sample Kanpur issue photos:
+              </span>
+              <div class="sample-photos-row">
+                <button type="button" class="sample-photo-btn" data-sample="pothole">
+                  <i class="fa-solid fa-road"></i> Kanpur GT Road Pothole
+                </button>
+                <button type="button" class="sample-photo-btn" data-sample="garbage">
+                  <i class="fa-solid fa-trash-can"></i> Market Waste Pile
+                </button>
+                <button type="button" class="sample-photo-btn" data-sample="streetlight">
+                  <i class="fa-solid fa-lightbulb"></i> Broken Swaroop Nagar Light
+                </button>
+                <button type="button" class="sample-photo-btn" data-sample="water">
+                  <i class="fa-solid fa-faucet-drip"></i> Pipeline Burst
+                </button>
+              </div>
+            </div>
+
+            <!-- Photo Preview Container -->
+            <div class="preview-container" id="photoPreviewContainer">
+              <div class="preview-wrapper">
+                <img id="photoPreviewImg" class="preview-image" src="" alt="Preview of uploaded civic problem">
+                <div style="flex: 1;">
+                  <strong style="font-size: 0.95rem; display: block; color: #0f172a; margin-bottom: 4px;">Photo Uploaded Successfully</strong>
+                  <p style="font-size: 0.8125rem; color: #64748b; margin-bottom: 12px;">
+                    Department field squads will inspect this image to assess equipment and materials required.
+                  </p>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-sm btn-outline-navy" onclick="document.getElementById('issuePhotoInput').click()">
+                      <i class="fa-solid fa-arrows-rotate"></i> Replace Photo
+                    </button>
+                    <button type="button" class="btn btn-sm" id="removePhotoBtn" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5;">
+                      <i class="fa-solid fa-trash"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI-Assisted Issue Analysis (Prototype Demo) -->
+            <div class="ai-assistant-card" id="aiAssistantCard" style="display: none;">
+              <div class="ai-assistant-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="ai-badge">AI Demo / Prototype</span>
+                  <strong style="color: #14532d; font-size: 0.9375rem;">AI-Assisted Visual Analysis</strong>
+                </div>
+                <div class="confidence-meter">
+                  <span>Confidence:</span>
+                  <div class="confidence-bar">
+                    <div class="confidence-fill" id="aiConfidenceBar" style="width: 92%;"></div>
+                  </div>
+                  <span id="aiConfidenceText">92%</span>
+                </div>
+              </div>
+              <p style="font-size: 0.85rem; color: #166534; margin-bottom: 10px;">
+                Visual model detected: <strong id="aiDetectedCategory" style="font-size: 0.95rem; color: #0f172a;">Pothole / Road Damage</strong>
+              </p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-sm btn-success" id="confirmAiBtn">
+                  <i class="fa-solid fa-check"></i> Confirm AI Suggestion
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-navy" onclick="goToStep(1)">
+                  Change Category Manually
+                </button>
+              </div>
+              <div style="font-size: 0.725rem; color: #65a30d; margin-top: 8px;">
+                * Prototype note: Simulated edge vision model for automatic triage. Can be integrated with trained municipal computer-vision models.
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STEP 3: SHARE LOCATION -->
+          <!-- ============================================== -->
+          <div class="step-block" data-step="3">
+            <div style="margin-bottom: 1rem;">
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin-bottom: 4px;">
+                Share Problem Location in Kanpur
+              </h2>
+              <p style="font-size: 0.9rem; color: #64748b;">
+                Pinpoint the exact location so Kanpur Nagar Nigam and PWD field crews can reach the spot without delay.
+              </p>
+            </div>
+
+            <!-- Location Action Controls -->
+            <div class="location-controls-bar" style="border-radius: 8px 8px 0 0; border: 1px solid #cbd5e1; border-bottom: none;">
+              <button type="button" class="btn btn-sm btn-gov-navy" id="useCurrentLocationBtn">
+                <i class="fa-solid fa-crosshairs"></i> Use My Current Location
+              </button>
+              
+              <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 200px;">
+                <label for="areaSelect" style="font-size: 0.8125rem; font-weight: 600; color: #475569; white-space: nowrap;">Kanpur Area:</label>
+                <select id="areaSelect" class="form-control" style="padding: 4px 8px; font-size: 0.85rem;">
+                  <!-- Populated via script -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Interactive Map Wrapper (Google Maps API placeholder + Leaflet fallback) -->
+            <div class="location-map-wrapper" style="margin-top: 0; border-radius: 0 0 8px 8px;">
+              <div id="locationMapCanvas" class="map-canvas-container">
+                <!-- Map Renders Here -->
+              </div>
+              <div style="background: #ffffff; padding: 8px 12px; font-size: 0.75rem; color: #64748b; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between;">
+                <span><i class="fa-solid fa-hand-pointer"></i> Click anywhere on the map or drag the marker to adjust exact coordinates.</span>
+                <span>Kanpur Center: 26.4499° N, 80.3319° E</span>
+              </div>
+            </div>
+
+            <!-- Location Status Confirmation Badge -->
+            <div class="location-status-badge active" id="locationStatusBadge">
+              <i class="fa-solid fa-circle-check"></i>
+              Location Selected: <strong>Civil Lines (Ward 12), Near Green Park Stadium, Kanpur</strong>
+            </div>
+
+            <!-- Duplicate Issue Detection Banner -->
+            <div class="duplicate-alert" id="duplicateIssueAlert">
+              <!-- Dynamically populated if duplicate within 500m -->
+            </div>
+
+            <!-- Address & Landmark Manual Input Fields -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 1.25rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="manualAddressInput">Approximate Address / Street</label>
+                <input type="text" id="manualAddressInput" class="form-control" value="Civil Lines, Near Green Park Stadium, Kanpur, UP">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="landmarkInput">Nearby Landmark (Optional)</label>
+                <input type="text" id="landmarkInput" class="form-control" placeholder="e.g. Near Motijheel Gate No. 2, Opposite Post Office">
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STEP 4: DESCRIBE PROBLEM -->
+          <!-- ============================================== -->
+          <div class="step-block" data-step="4">
+            <div style="margin-bottom: 1.25rem;">
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin-bottom: 4px;">
+                Describe the Civic Problem
+              </h2>
+              <p style="font-size: 0.9rem; color: #64748b;">
+                Provide clear details about the issue to assist the field team in prioritizing and dispatching resources.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="issueDescriptionInput">
+                Problem Description <span class="required">*</span>
+              </label>
+              <textarea id="issueDescriptionInput" class="form-control" rows="4" placeholder="Describe the problem, severity, depth of pothole, duration of garbage accumulation, or traffic hazard..."></textarea>
+              <span style="font-size: 0.775rem; color: #64748b;">Minimum 10 characters required.</span>
+            </div>
+
+            <!-- Citizen Optional Contact Info -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; margin-top: 1.25rem;">
+              <h4 style="font-size: 0.95rem; color: #0f3e6d; margin-bottom: 10px;">
+                <i class="fa-solid fa-user-shield"></i> Citizen Information (Optional for SMS / Tracking Updates)
+              </h4>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="citizenNameInput">Full Name</label>
+                  <input type="text" id="citizenNameInput" class="form-control" placeholder="e.g. Rakesh Kumar">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label" for="citizenPhoneInput">Mobile Number</label>
+                  <input type="tel" id="citizenPhoneInput" class="form-control" placeholder="e.g. 9839XXXXXX">
+                </div>
+              </div>
+            </div>
+
+            <!-- Priority Suggestion Card -->
+            <div class="priority-suggestion-card">
+              <div>
+                <strong style="font-size: 0.9rem; color: #1e293b; display: block;">Automated Priority Assessment</strong>
+                <span id="priorityReasonText" style="font-size: 0.8125rem; color: #64748b;">
+                  Based on category and keywords, the system recommends an action priority level.
+                </span>
+              </div>
+              <div id="suggestedPriorityBadge" class="priority-badge priority-high">
+                <i class="fa-solid fa-shield"></i> Suggested Priority: HIGH
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STEP 5: REVIEW & ROUTE -->
+          <!-- ============================================== -->
+          <div class="step-block" data-step="5">
+            <div style="margin-bottom: 1.25rem;">
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin-bottom: 4px;">
+                Review Your Complaint Before Submission
+              </h2>
+              <p style="font-size: 0.9rem; color: #64748b;">
+                Please verify all the details below. Once submitted, your grievance will be forwarded to the designated department.
+              </p>
+            </div>
+
+            <table class="review-table">
+              <tbody>
+                <tr>
+                  <th>Issue Category:</th>
+                  <td id="revCategory" style="font-weight: 700; color: #0f3e6d;">Pothole</td>
+                </tr>
+                <tr>
+                  <th>Forwarded Department:</th>
+                  <td id="revDept" style="font-weight: 700; color: #ea580c;">Road / Public Works Department</td>
+                </tr>
+                <tr>
+                  <th>Estimated Priority:</th>
+                  <td id="revPriority">
+                    <span class="priority-badge priority-high">High</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Incident Location:</th>
+                  <td id="revLocation">Civil Lines, Kanpur (Ward 12)</td>
+                </tr>
+                <tr>
+                  <th>Problem Description:</th>
+                  <td id="revDesc">Deep pothole spanning main road causing traffic hazard.</td>
+                </tr>
+                <tr>
+                  <th>Citizen Contact:</th>
+                  <td id="revCitizen">Anonymous Citizen</td>
+                </tr>
+                <tr>
+                  <th>Uploaded Photo:</th>
+                  <td id="revPhoto">No photo attached</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="display: flex; gap: 10px; margin-top: 1rem;">
+              <button type="button" class="btn btn-outline-navy btn-sm" id="editComplaintBtn">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Complaint
+              </button>
+            </div>
+          </div>
+
+          <!-- ============================================== -->
+          <!-- STEP 6: COMPLAINT SUCCESS SCREEN -->
+          <!-- ============================================== -->
+          <div class="step-block" data-step="6">
+            <div class="success-screen">
+              <div class="success-icon-bubble">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <h2 style="font-size: 1.75rem; font-weight: 800; color: #0f3e6d; margin-bottom: 0.5rem;">
+                Complaint Successfully Registered
+              </h2>
+              <p style="font-size: 1rem; color: #475569; max-width: 540px; margin: 0 auto 1.5rem;">
+                Your civic issue has been officially logged into SudhaarSetu and dispatched to the concerned departmental cell for Kanpur Nagar.
+              </p>
+
+              <div class="complaint-id-box">
+                <div class="complaint-id-label">Your Unique Complaint ID</div>
+                <div class="complaint-id-val" id="successComplaintId">SS-KNP-2026-001250</div>
+                <p style="font-size: 0.8125rem; color: #64748b; margin-top: 6px;">
+                  Save your Complaint ID to track the status of your issue.
+                </p>
+                <button type="button" class="btn btn-sm btn-outline-navy" id="copyComplaintIdBtn" style="margin-top: 8px;">
+                  <i class="fa-regular fa-copy"></i> Copy Complaint ID
+                </button>
+              </div>
+
+              <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 2rem;">
+                <a href="track.html" id="successTrackLink" class="btn btn-primary btn-lg">
+                  <i class="fa-solid fa-magnifying-glass"></i> Track Complaint Status
+                </a>
+                <a href="report.html" class="btn btn-outline-navy btn-lg">
+                  <i class="fa-solid fa-circle-plus"></i> Report Another Issue
+                </a>
+                <a href="dashboard.html" class="btn btn-gov-navy btn-lg">
+                  <i class="fa-solid fa-table-columns"></i> Go to Dashboard
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- FORM NAVIGATION FOOTER -->
+        <div class="form-step-footer" id="formFooter">
+          <button type="button" class="btn btn-outline-navy" id="prevStepBtn" style="display: none;">
+            <i class="fa-solid fa-arrow-left"></i> Previous Step
+          </button>
+          <div style="margin-left: auto; display: flex; gap: 10px;">
+            <button type="button" class="btn btn-primary" id="nextStepBtn">
+              Next Step <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <button type="button" class="btn btn-success" id="submitComplaintBtn" style="display: none;">
+              <i class="fa-solid fa-paper-plane"></i> Submit Complaint
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-bottom">
+      <div>
+        © 2026 SudhaarSetu — Civic-Tech Prototype for Kanpur, Uttar Pradesh.
+      </div>
+      <div>
+        Helpline: <strong>1533</strong> • Emergency: <strong>112</strong>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Leaflet Map JS Fallback Engine -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Google Maps API Configuration Placeholder Script -->
+  <!-- 
+    To use your Google Maps API Key, replace YOUR_GOOGLE_MAPS_API_KEY with your key.
+    If the key is unavailable, the Leaflet/OpenStreetMap fallback operates seamlessly.
+  -->
+  <script>
+    window.GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+  </script>
+
+  <!-- Shared & Page Scripts -->
+  <script src="/js/script.js"></script>
+  <script src="/js/report.js"></script>
+</body>
+</html>

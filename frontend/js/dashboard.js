@@ -1,101 +1,107 @@
 /**
- * SudhaarSetu - Citizen Dashboard Controller (js/dashboard.js)
- * Displays citizen grievance overview, personal statistics,
- * recent complaints list with status filters, and track action.
+ * SudhaarSetu — Citizen Grievance Dashboard
  */
 
-document.addEventListener("DOMContentLoaded", () => {
-  let activeTab = "all";
+let citizenComplaints = [];
+let activeTab = 'all';
 
-  const totalCard = document.getElementById("dashTotalCount");
-  const pendingCard = document.getElementById("dashPendingCount");
-  const progressCard = document.getElementById("dashProgressCount");
-  const resolvedCard = document.getElementById("dashResolvedCount");
-  const complaintsList = document.getElementById("dashComplaintsList");
+document.addEventListener('DOMContentLoaded', async () => {
+  citizenComplaints = await fetchAllComplaints();
+  updateDashboardMetrics();
+  initDashboardTabs();
+  renderCitizenComplaints();
+});
 
-  function renderCitizenDashboard() {
-    const all = window.getComplaints();
+function updateDashboardMetrics() {
+  const total = citizenComplaints.length;
+  const pending = citizenComplaints.filter(c => c.status === 'Registered' || c.status === 'Under Review').length;
+  const progress = citizenComplaints.filter(c => c.status === 'Assigned' || c.status === 'In Progress').length;
+  const resolved = citizenComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed').length;
 
-    const total = all.length;
-    const pending = all.filter(c => c.status === "Registered" || c.status === "Under Review" || c.status === "Assigned").length;
-    const progress = all.filter(c => c.status === "In Progress").length;
-    const resolved = all.filter(c => c.status === "Resolved" || c.status === "Closed").length;
+  document.getElementById('dashTotalCount').textContent = total;
+  document.getElementById('dashPendingCount').textContent = pending;
+  document.getElementById('dashProgressCount').textContent = progress;
+  document.getElementById('dashResolvedCount').textContent = resolved;
+}
 
-    if (totalCard) totalCard.textContent = total;
-    if (pendingCard) pendingCard.textContent = pending;
-    if (progressCard) progressCard.textContent = progress;
-    if (resolvedCard) resolvedCard.textContent = resolved;
-
-    // Filter complaints based on active tab
-    const filtered = all.filter(c => {
-      if (activeTab === "all") return true;
-      if (activeTab === "pending") return (c.status === "Registered" || c.status === "Under Review" || c.status === "Assigned");
-      if (activeTab === "progress") return c.status === "In Progress";
-      if (activeTab === "resolved") return (c.status === "Resolved" || c.status === "Closed");
-      return true;
+function initDashboardTabs() {
+  document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dash-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = btn.getAttribute('data-tab');
+      renderCitizenComplaints();
     });
+  });
+}
 
-    if (!complaintsList) return;
+function renderCitizenComplaints() {
+  const container = document.getElementById('dashComplaintsList');
+  if (!container) return;
 
-    if (filtered.length === 0) {
-      complaintsList.innerHTML = `
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 3rem 1.5rem; text-align: center; color: #64748b;">
-          <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
-          <h4 style="color: #1e293b; margin-bottom: 0.5rem;">No Complaints in this view</h4>
-          <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">Have an issue to report in your neighborhood in Kanpur?</p>
-          <a href="report.html" class="btn btn-primary">
-            <i class="fa-solid fa-plus"></i> Report a Civic Issue
-          </a>
-        </div>
-      `;
-      return;
-    }
+  let filtered = citizenComplaints;
+  if (activeTab === 'pending') {
+    filtered = citizenComplaints.filter(c => c.status === 'Registered' || c.status === 'Under Review');
+  } else if (activeTab === 'progress') {
+    filtered = citizenComplaints.filter(c => c.status === 'Assigned' || c.status === 'In Progress');
+  } else if (activeTab === 'resolved') {
+    filtered = citizenComplaints.filter(c => c.status === 'Resolved' || c.status === 'Closed');
+  }
 
-    complaintsList.innerHTML = filtered.map(c => `
-      <div class="category-card" style="margin-bottom: 1rem; border-left: 5px solid ${c.status === 'Resolved' ? '#16a34a' : (c.priority === 'High' ? '#dc2626' : '#0f3e6d')};">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 0.75rem;">
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 3rem 1rem; color: #64748b;">
+        <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; margin-bottom: 0.75rem; color: #cbd5e1;"></i>
+        <p>No complaints found under this category.</p>
+        <a href="report.html" class="btn btn-outline-navy btn-sm" style="margin-top: 8px;">
+          <i class="fa-solid fa-bullhorn"></i> File a New Grievance
+        </a>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(c => {
+    const sSlug = c.status.toLowerCase().replace(' ', '-');
+    const pSlug = (c.priority || 'Medium').toLowerCase();
+    const dateFormatted = new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    return `
+      <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; background: #ffffff; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.boxShadow='none'">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
           <div>
-            <span style="font-size: 0.8125rem; font-weight: 700; color: #0f3e6d;">ID: ${c.id}</span>
-            <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 2px 0;">${c.categoryLabel}</h3>
-            <span style="font-size: 0.8125rem; color: #64748b;">
-              <i class="fa-solid fa-building-columns"></i> ${c.department}
-            </span>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="font-size: 0.8125rem; font-weight: 700; color: #0f3e6d;">${c.id}</span>
+              <span class="priority-badge priority-${pSlug}">${c.priority}</span>
+              <span style="font-size: 0.75rem; color: #64748b;">• ${dateFormatted}</span>
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
+              ${c.categoryTitle || c.category}
+            </h3>
+            <div style="font-size: 0.8125rem; color: #475569;">
+              <i class="fa-solid fa-location-dot" style="color: #ea580c;"></i> ${c.location}
+            </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            ${window.getPriorityBadgeHtml(c.priority)}
-            ${window.getStatusBadgeHtml(c.status)}
-          </div>
+          <span class="status-badge status-${sSlug}">
+            <i class="fa-solid fa-circle"></i> ${c.status}
+          </span>
         </div>
 
-        <p style="font-size: 0.9rem; color: #334155; margin-bottom: 0.75rem; line-height: 1.5;">
+        <p style="font-size: 0.875rem; color: #475569; margin: 8px 0 12px; line-height: 1.4;">
           ${c.description}
         </p>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 0.75rem; font-size: 0.8125rem; color: #64748b;">
-          <div>
-            <i class="fa-solid fa-location-dot" style="color: #ea580c;"></i>
-            <strong>${c.location.area || "Kanpur"}</strong>: ${c.location.address}
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 10px; flex-wrap: wrap; gap: 8px;">
+          <div style="font-size: 0.775rem; color: #64748b;">
+            Routed To: <strong style="color: #0369a1;">${c.deptName} (${c.deptCode})</strong>
           </div>
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <span><i class="fa-regular fa-calendar"></i> ${window.formatDate(c.reportedDate)}</span>
-            <a href="track.html?id=${c.id}" class="btn btn-sm btn-outline-navy">
-              <i class="fa-solid fa-magnifying-glass"></i> Track Status
+          <div style="display: flex; gap: 8px;">
+            <a href="track.html?id=${c.id}" class="btn btn-sm btn-primary">
+              <i class="fa-solid fa-magnifying-glass"></i> Track Progress
             </a>
           </div>
         </div>
       </div>
-    `).join("");
-  }
-
-  // Filter tabs
-  document.querySelectorAll(".dash-tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".dash-tab-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeTab = btn.dataset.tab;
-      renderCitizenDashboard();
-    });
-  });
-
-  renderCitizenDashboard();
-});
+    `;
+  }).join('');
+}

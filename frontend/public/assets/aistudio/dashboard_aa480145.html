@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Grievance Dashboard — SudhaarSetu Kanpur</title>
+  <meta name="description" content="Manage and view your reported civic complaints across Kanpur Nagar. Track resolution status, review updates, and file new complaints.">
+  <meta property="og:title" content="Citizen Dashboard — SudhaarSetu Kanpur">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="gov-tricolor-strip"></div>
+
+  <!-- Top Gov Utility Bar -->
+  <div class="gov-top-bar">
+    <div class="container">
+      <div class="gov-badge">
+        <i class="fa-solid fa-landmark"></i>
+        <span>Citizen Grievance Portal • Kanpur Nagar</span>
+        <span class="gov-badge-tag">Citizen View</span>
+      </div>
+      <div class="gov-top-actions">
+        <div class="font-resizer">
+          <span style="font-size: 0.75rem; color: #94a3b8;">Text Size:</span>
+          <button class="font-btn" data-size="small" onclick="setFontSize('small')">A-</button>
+          <button class="font-btn active" data-size="normal" onclick="setFontSize('normal')">A</button>
+          <button class="font-btn" data-size="large" onclick="setFontSize('large')">A+</button>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+          <span style="color: rgba(255,255,255,0.4);">|</span>
+          <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-group">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">Sudhaar<span>Setu</span></span>
+          <span class="brand-sub">Civic Issue Management for Kanpur</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="report.html" class="nav-link">
+          <i class="fa-solid fa-file-circle-plus"></i> Report Issue
+        </a>
+        <a href="track.html" class="nav-link">
+          <i class="fa-solid fa-magnifying-glass-location"></i> Track Status
+        </a>
+        <a href="map.html" class="nav-link">
+          <i class="fa-solid fa-map-location-dot"></i> Issues Map
+        </a>
+        <a href="dashboard.html" class="nav-link active">
+          <i class="fa-solid fa-table-columns"></i> My Dashboard
+        </a>
+        <a href="admin.html" class="nav-link" style="color: #ffb366;">
+          <i class="fa-solid fa-lock"></i> Dept Login
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="report.html" class="btn btn-primary">
+          <i class="fa-solid fa-bullhorn"></i> Report an Issue
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <div class="gov-breadcrumb-bar">
+    <div class="container">
+      <ul class="breadcrumb">
+        <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li class="breadcrumb-separator">/</li>
+        <li>Citizen Portal</li>
+        <li class="breadcrumb-separator">/</li>
+        <li style="color: #0f172a; font-weight: 600;">My Dashboard</li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="content-wrapper">
+    <div class="container" style="padding-top: 2rem;">
+      <!-- Dashboard Top Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+        <div>
+          <span class="section-tag">Citizen Workspace</span>
+          <h1 style="font-size: 2rem; font-weight: 800; color: #0f3e6d; margin: 4px 0;">
+            My Grievance Dashboard
+          </h1>
+          <p style="font-size: 0.95rem; color: #64748b;">
+            Track all previous complaints lodged in Kanpur Nagar, inspect progress timelines, and verify completed works.
+          </p>
+        </div>
+        <a href="report.html" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-circle-plus"></i> Report a Civic Issue
+        </a>
+      </div>
+
+      <!-- Statistics Cards Grid -->
+      <div class="stats-cards-grid">
+        <!-- Total Complaints -->
+        <div class="stat-card total">
+          <div class="stat-card-icon">
+            <i class="fa-solid fa-folder-closed"></i>
+          </div>
+          <div>
+            <div class="stat-card-value" id="dashTotalCount">5</div>
+            <div class="stat-card-label">Total Complaints</div>
+          </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="stat-card pending">
+          <div class="stat-card-icon">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div>
+            <div class="stat-card-value" id="dashPendingCount">3</div>
+            <div class="stat-card-label">Pending / In Review</div>
+          </div>
+        </div>
+
+        <!-- In Progress -->
+        <div class="stat-card progress">
+          <div class="stat-card-icon">
+            <i class="fa-solid fa-wrench"></i>
+          </div>
+          <div>
+            <div class="stat-card-value" id="dashProgressCount">1</div>
+            <div class="stat-card-label">Work in Progress</div>
+          </div>
+        </div>
+
+        <!-- Resolved -->
+        <div class="stat-card resolved">
+          <div class="stat-card-icon">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <div class="stat-card-value" id="dashResolvedCount">1</div>
+            <div class="stat-card-label">Resolved Issues</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grievance Filter Tabs & List -->
+      <div style="background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f3e6d; margin: 0;">
+            <i class="fa-solid fa-list-check"></i> My Recent Complaints
+          </h2>
+
+          <!-- Status Filter Tabs -->
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button type="button" class="filter-btn dash-tab-btn active" data-tab="all">All</button>
+            <button type="button" class="filter-btn dash-tab-btn" data-tab="pending">Pending</button>
+            <button type="button" class="filter-btn dash-tab-btn" data-tab="progress">In Progress</button>
+            <button type="button" class="filter-btn dash-tab-btn" data-tab="resolved">Resolved</button>
+          </div>
+        </div>
+
+        <!-- Complaints List Container -->
+        <div id="dashComplaintsList">
+          <!-- Populated by js/dashboard.js -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-bottom">
+      <div>
+        © 2026 SudhaarSetu — Civic-Tech Prototype for Kanpur, Uttar Pradesh.
+      </div>
+      <div>
+        Helpline: <strong>1533</strong> • Emergency: <strong>112</strong>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/script.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

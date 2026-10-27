@@ -1,32 +1,29 @@
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    build: {
-      rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, 'index.html'),
-          report: path.resolve(__dirname, 'report.html'),
-          track: path.resolve(__dirname, 'track.html'),
-          map: path.resolve(__dirname, 'map.html'),
-          dashboard: path.resolve(__dirname, 'dashboard.html'),
-          admin: path.resolve(__dirname, 'admin.html'),
-        },
-      },
-    },
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(__dirname, './src'),
       },
     },
     server: {
       port: 3000,
       host: '0.0.0.0',
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      proxy: {
+        '/api': {
+          target: process.env.VITE_BACKEND_URL || 'http://localhost:5000',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
+      // HMR handling
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };
 });
-
