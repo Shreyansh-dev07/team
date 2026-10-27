@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SudhaarSetu — Kanpur Civic Issue Management Portal</title>
+  <meta name="description" content="Report civic problems, share location, and track solutions across Kanpur departments. SudhaarSetu is a civic-tech platform for a better Kanpur.">
+  <meta property="og:title" content="SudhaarSetu — Kanpur Civic Issue Portal">
+  <meta property="og:description" content="Report civic problems, track solutions, build a better Kanpur.">
+  <meta property="og:type" content="website">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Tricolor Accent Strip -->
+  <div class="gov-tricolor-strip"></div>
+
+  <!-- Government Style Top Utility Bar -->
+  <div class="gov-top-bar">
+    <div class="container">
+      <div class="gov-badge">
+        <i class="fa-solid fa-landmark"></i>
+        <span>Civic-Tech Initiative for Kanpur Nagar, Uttar Pradesh</span>
+        <span class="gov-badge-tag">Civic Prototype</span>
+      </div>
+      <div class="gov-top-actions">
+        <div class="font-resizer" title="Adjust text size">
+          <span style="font-size: 0.75rem; margin-right: 4px; color: #94a3b8;">Text Size:</span>
+          <button class="font-btn" data-size="small" onclick="setFontSize('small')">A-</button>
+          <button class="font-btn active" data-size="normal" onclick="setFontSize('normal')">A</button>
+          <button class="font-btn" data-size="large" onclick="setFontSize('large')">A+</button>
+        </div>
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">English</button>
+          <span style="color: rgba(255,255,255,0.4);">|</span>
+          <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">हिंदी</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="main-header">
+    <div class="header-container">
+      <!-- Logo & Branding -->
+      <a href="index.html" class="brand-group">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-name">Sudhaar<span>Setu</span></span>
+          <span class="brand-sub" data-i18n="portalTagline">Civic Issue Management for Kanpur</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link active">
+          <i class="fa-solid fa-house"></i> <span data-i18n="home">Home</span>
+        </a>
+        <a href="report.html" class="nav-link">
+          <i class="fa-solid fa-file-circle-plus"></i> <span data-i18n="reportBtn">Report Issue</span>
+        </a>
+        <a href="track.html" class="nav-link">
+          <i class="fa-solid fa-magnifying-glass-location"></i> <span data-i18n="trackBtn">Track Status</span>
+        </a>
+        <a href="map.html" class="nav-link">
+          <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="map">Issues Map</span>
+        </a>
+        <a href="dashboard.html" class="nav-link">
+          <i class="fa-solid fa-table-columns"></i> <span data-i18n="dashboard">My Dashboard</span>
+        </a>
+        <a href="#howItWorks" class="nav-link">
+          <i class="fa-solid fa-circle-question"></i> <span data-i18n="howItWorks">How It Works</span>
+        </a>
+        <a href="admin.html" class="nav-link" style="color: #ffb366;">
+          <i class="fa-solid fa-lock"></i> <span data-i18n="admin">Dept Login</span>
+        </a>
+      </nav>
+
+      <!-- Action Button & Mobile Toggle -->
+      <div class="header-actions">
+        <a href="report.html" class="btn btn-primary">
+          <i class="fa-solid fa-bullhorn"></i> <span data-i18n="reportBtn">Report an Issue</span>
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-wrapper">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-pattern"></div>
+      <div class="container hero-grid">
+        <!-- Hero Left Text -->
+        <div>
+          <div class="hero-tag">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Citizen-First Civic Redressal • Kanpur, UP</span>
+          </div>
+          <h1 class="hero-title" data-i18n="heroTitle">
+            Together, Let's Build a <span>Better Kanpur</span>
+          </h1>
+          <p class="hero-sub" data-i18n="heroSub">
+            Report civic problems, share their location, and track their resolution — all in one place.
+          </p>
+
+          <div style="font-size: 0.95rem; font-weight: 600; color: #ffb366; margin-bottom: 1.5rem;">
+            “Your Issue. Our Responsibility. Better Kanpur.”
+          </div>
+
+          <div class="hero-actions">
+            <a href="report.html" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-circle-plus"></i> <span data-i18n="reportBtn">Report an Issue</span>
+            </a>
+            <a href="track.html" class="btn btn-outline-gov btn-lg">
+              <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="trackBtn">Track My Complaint</span>
+            </a>
+          </div>
+
+          <!-- Quick Civic Stats Strip -->
+          <div class="hero-stats-strip">
+            <div class="hero-stat-item">
+              <span class="hero-stat-number">1,250+</span>
+              <span class="hero-stat-label">Complaints Logged</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-number" style="color: #4ade80;">88%</span>
+              <span class="hero-stat-label">Resolved / In Progress</span>
+            </div>
+            <div class="hero-stat-item">
+              <span class="hero-stat-number">6</span>
+              <span class="hero-stat-label">Kanpur Zones Covered</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Right Visual Illustration -->
+        <div class="hero-illustration-card">
+          <div class="city-badge-top">
+            <span><i class="fa-solid fa-city"></i> Kanpur City Infrastructure Network</span>
+            <span style="color: #4ade80;"><i class="fa-solid fa-circle-nodes"></i> Active Grid</span>
+          </div>
+
+          <!-- Clean City & Infrastructure Vector Graphic -->
+          <svg class="hero-vector-svg" viewBox="0 0 480 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="480" height="240" rx="8" fill="#07223b"/>
+            <!-- Sky stars & moon -->
+            <circle cx="430" cy="40" r="14" fill="#fef08a" opacity="0.8"/>
+            <!-- Kanpur skyline silhouettes -->
+            <rect x="30" y="100" width="35" height="100" rx="2" fill="#133d63"/>
+            <rect x="75" y="70" width="45" height="130" rx="2" fill="#1a4d7c"/>
+            <rect x="130" y="110" width="40" height="90" rx="2" fill="#133d63"/>
+            <rect x="180" y="85" width="55" height="115" rx="2" fill="#20598e"/>
+            <rect x="245" y="60" width="50" height="140" rx="2" fill="#1a4d7c"/>
+            <rect x="305" y="95" width="45" height="105" rx="2" fill="#133d63"/>
+            <rect x="360" y="75" width="50" height="125" rx="2" fill="#20598e"/>
+            <rect x="420" y="105" width="40" height="95" rx="2" fill="#133d63"/>
+            
+            <!-- Kanpur Bridge / Setu Representation -->
+            <path d="M 0 190 Q 240 160 480 190" stroke="#ff9933" stroke-width="4" stroke-dasharray="8 6"/>
+            <rect x="0" y="195" width="480" height="45" fill="#0a1a29"/>
+            
+            <!-- Road with markings -->
+            <line x1="0" y1="218" x2="480" y2="218" stroke="#ffffff" stroke-width="2" stroke-dasharray="14 12"/>
+
+            <!-- Streetlight Graphic -->
+            <line x1="60" y1="200" x2="60" y2="150" stroke="#94a3b8" stroke-width="3"/>
+            <path d="M 60 150 Q 75 145 80 155" stroke="#94a3b8" stroke-width="3" fill="none"/>
+            <circle cx="80" cy="156" r="4" fill="#fde047"/>
+            <polygon points="74,162 86,162 100,195 60,195" fill="url(#lightCone)" opacity="0.35"/>
+
+            <!-- Location Pins representing Kanpur reports -->
+            <g transform="translate(145, 140)">
+              <circle cx="12" cy="12" r="10" fill="#ea580c"/>
+              <circle cx="12" cy="12" r="5" fill="#ffffff"/>
+            </g>
+            <g transform="translate(265, 120)">
+              <circle cx="12" cy="12" r="10" fill="#16a34a"/>
+              <circle cx="12" cy="12" r="5" fill="#ffffff"/>
+            </g>
+            <g transform="translate(380, 135)">
+              <circle cx="12" cy="12" r="10" fill="#0284c7"/>
+              <circle cx="12" cy="12" r="5" fill="#ffffff"/>
+            </g>
+
+            <!-- Gradient definition -->
+            <defs>
+              <linearGradient id="lightCone" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#fde047" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#fde047" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <!-- Live Civic Feed snippet -->
+          <div class="live-civic-feed">
+            <div class="feed-dot"></div>
+            <div style="flex: 1;">
+              <strong>Latest Update:</strong> Pothole near Kalyanpur Crossing assigned to PWD Squad 4.
+            </div>
+            <a href="track.html?id=SS-KNP-2026-001245" style="color: #93c5fd; font-size: 0.75rem; text-decoration: underline;">Track</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Civic Issue Categories Section -->
+    <section class="container" style="padding-top: 1rem;">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="whatCanReport">Citizen Grievance Categories</span>
+        <h2 class="section-title" data-i18n="whatCanReport">What Can You Report?</h2>
+        <p class="section-desc">
+          Select any public infrastructure issue in your neighborhood. SudhaarSetu automatically routes your report to the designated Kanpur government division.
+        </p>
+      </div>
+
+      <div class="categories-grid">
+        <!-- 1. Road & Infrastructure -->
+        <div class="category-card road">
+          <div class="category-header">
+            <div class="category-icon">
+              <i class="fa-solid fa-road"></i>
+            </div>
+            <div>
+              <h3 class="category-name" data-i18n="potholeTitle">Road & Infrastructure</h3>
+              <span class="category-dept-tag">Routes to: Road / Public Works Department</span>
+            </div>
+          </div>
+          <p class="category-desc">
+            Report road cracks, hazardous potholes, damaged asphalt, sinking pavements, or broken pedestrian footpaths across Kanpur.
+          </p>
+          <div class="category-tags">
+            <span class="category-chip">Potholes</span>
+            <span class="category-chip">Road Cracks</span>
+            <span class="category-chip">Damaged Roads</span>
+            <span class="category-chip">Broken Footpaths</span>
+          </div>
+          <a href="report.html?category=pothole" class="btn btn-outline-navy">
+            <i class="fa-solid fa-bullhorn"></i> Report Road Issue
+          </a>
+        </div>
+
+        <!-- 2. Garbage & Sanitation -->
+        <div class="category-card sanitation">
+          <div class="category-header">
+            <div class="category-icon">
+              <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <div>
+              <h3 class="category-name" data-i18n="garbageTitle">Garbage & Sanitation</h3>
+              <span class="category-dept-tag">Routes to: Sanitation & Solid Waste Management</span>
+            </div>
+          </div>
+          <p class="category-desc">
+            Report uncollected waste piles, missed compactor routes, dirty public spaces, overflowing community bins, and illegal dumping.
+          </p>
+          <div class="category-tags">
+            <span class="category-chip">Garbage Piles</span>
+            <span class="category-chip">Waste Collection</span>
+            <span class="category-chip">Dirty Public Areas</span>
+            <span class="category-chip">Market Refuse</span>
+          </div>
+          <a href="report.html?category=garbage" class="btn btn-outline-navy">
+            <i class="fa-solid fa-bullhorn"></i> Report Sanitation Issue
+          </a>
+        </div>
+
+        <!-- 3. Streetlights -->
+        <div class="category-card light">
+          <div class="category-header">
+            <div class="category-icon">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div>
+              <h3 class="category-name" data-i18n="streetlightTitle">Streetlights & Electrical</h3>
+              <span class="category-dept-tag">Routes to: Streetlight / Electrical Department</span>
+            </div>
+          </div>
+          <p class="category-desc">
+            Report broken streetlight fixtures, non-functioning LED lamps, dark alleyways, exposed electrical wiring, or loose poles.
+          </p>
+          <div class="category-tags">
+            <span class="category-chip">Broken Streetlights</span>
+            <span class="category-chip">Non-working Lights</span>
+            <span class="category-chip">Dark Streets</span>
+            <span class="category-chip">Loose Pole Wires</span>
+          </div>
+          <a href="report.html?category=streetlight" class="btn btn-outline-navy">
+            <i class="fa-solid fa-bullhorn"></i> Report Streetlight Issue
+          </a>
+        </div>
+
+        <!-- 4. Water Supply -->
+        <div class="category-card water">
+          <div class="category-header">
+            <div class="category-icon">
+              <i class="fa-solid fa-faucet-drip"></i>
+            </div>
+            <div>
+              <h3 class="category-name" data-i18n="waterTitle">Water Supply & Leakages</h3>
+              <span class="category-dept-tag">Routes to: Kanpur Jal Sansthan</span>
+            </div>
+          </div>
+          <p class="category-desc">
+            Report drinking water supply disruption, bursting main underground supply pipes, contaminated water, or low water pressure.
+          </p>
+          <div class="category-tags">
+            <span class="category-chip">Drinking Water</span>
+            <span class="category-chip">Water Leakage</span>
+            <span class="category-chip">Pipeline Bursts</span>
+            <span class="category-chip">Contamination</span>
+          </div>
+          <a href="report.html?category=water" class="btn btn-outline-navy">
+            <i class="fa-solid fa-bullhorn"></i> Report Water Issue
+          </a>
+        </div>
+
+        <!-- 5. Drainage & Sewerage -->
+        <div class="category-card drain">
+          <div class="category-header">
+            <div class="category-icon">
+              <i class="fa-solid fa-water"></i>
+            </div>
+            <div>
+              <h3 class="category-name" data-i18n="drainageTitle">Drainage & Sewerage</h3>
+              <span class="category-dept-tag">Routes to: Drainage & Sewerage Division</span>
+            </div>
+          </div>
+          <p class="category-desc">
+            Report choked stormwater drains, heavy street waterlogging, open or broken sewer manhole covers, and foul backflows.
+          </p>
+          <div class="category-tags">
+            <span class="category-chip">Blocked Drains</span>
+            <span class="category-chip">Waterlogging</span>
+            <span class="category-chip">Sewerage Overflow</span>
+            <span class="category-chip">Missing Manhole Covers</span>
+          </div>
+          <a href="report.html?category=drainage" class="btn btn-outline-navy">
+            <i class="fa-solid fa-bullhorn"></i> Report Drainage Issue
+          </a>
+        </div>
+
+        <!-- 6. Other Infrastructure -->
+        <div class="category-card other">
+          <div class="category-header">
+            <div class="category-icon">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+              <h3 class="category-name" data-i18n="otherTitle">Other Civic Infrastructure</h3>
+              <span class="category-dept-tag">Routes to: General Civic Works</span>
+            </div>
+          </div>
+          <p class="category-desc">
+            Report damaged park amenities, fallen tree branches blocking traffic, broken signage, public toilet maintenance, and other hazards.
+          </p>
+          <div class="category-tags">
+            <span class="category-chip">Fallen Trees</span>
+            <span class="category-chip">Damaged Park Benches</span>
+            <span class="category-chip">Broken Signage</span>
+            <span class="category-chip">General Hazards</span>
+          </div>
+          <a href="report.html?category=other" class="btn btn-outline-navy">
+            <i class="fa-solid fa-bullhorn"></i> Report Other Issue
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works-section" id="howItWorks">
+      <div class="container">
+        <div class="section-header" style="margin-top: 0;">
+          <span class="section-tag" data-i18n="howItWorks">Simple 5-Step Process</span>
+          <h2 class="section-title">How SudhaarSetu Works for Citizens</h2>
+          <p class="section-desc">
+            Transparent grievance redressal from submission to ground inspection and verified resolution.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          <!-- Step 1 -->
+          <div class="step-item">
+            <div class="step-bubble">
+              <i class="fa-solid fa-camera"></i>
+              <span class="step-number">1</span>
+            </div>
+            <h4 class="step-title">1. Report</h4>
+            <p class="step-desc">Select the issue category and upload a clear photo of the problem.</p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-item">
+            <div class="step-bubble">
+              <i class="fa-solid fa-location-crosshairs"></i>
+              <span class="step-number">2</span>
+            </div>
+            <h4 class="step-title">2. Locate</h4>
+            <p class="step-desc">Use GPS, interactive Kanpur map, or select your Kanpur ward & landmark.</p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-item">
+            <div class="step-bubble">
+              <i class="fa-solid fa-share-nodes"></i>
+              <span class="step-number">3</span>
+            </div>
+            <h4 class="step-title">3. Forward</h4>
+            <p class="step-desc">System instantly routes the grievance to the concerned Kanpur municipal department.</p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-item">
+            <div class="step-bubble">
+              <i class="fa-solid fa-ticket"></i>
+              <span class="step-number">4</span>
+            </div>
+            <h4 class="step-title">4. Track</h4>
+            <p class="step-desc">Receive a unique Complaint ID (e.g. SS-KNP-2026-001245) to monitor live status.</p>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-item">
+            <div class="step-bubble">
+              <i class="fa-solid fa-check-double"></i>
+              <span class="step-number">5</span>
+            </div>
+            <h4 class="step-title">5. Resolve</h4>
+            <p class="step-desc">Field engineering squads resolve the issue and upload photographic evidence.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kanpur Focus & Key Localities Section -->
+    <section class="container">
+      <div class="kanpur-focus-banner">
+        <div>
+          <span class="kanpur-badge">
+            <i class="fa-solid fa-location-pin"></i> Kanpur Municipal Coverage
+          </span>
+          <h2 class="kanpur-title">Civic Issue Management for Kanpur</h2>
+          <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 1.5rem; line-height: 1.6;">
+            Dedicated to improving public roads, sanitation, potable water, and streetlights across all major zones and wards of Kanpur, Uttar Pradesh.
+          </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="map.html" class="btn btn-primary">
+              <i class="fa-solid fa-map-location-dot"></i> View Kanpur Issues Map
+            </a>
+            <a href="track.html" class="btn btn-outline-gov">
+              <i class="fa-solid fa-magnifying-glass"></i> Track Your Grievance
+            </a>
+          </div>
+        </div>
+
+        <div class="kanpur-zones-grid">
+          <div class="zone-chip">
+            <strong>Zone 1: Central</strong>
+            Civil Lines • Parade • Bada Chauraha
+          </div>
+          <div class="zone-chip">
+            <strong>Zone 2: North / West</strong>
+            Kalyanpur • IITK Area • Panki
+          </div>
+          <div class="zone-chip">
+            <strong>Zone 3: Central-West</strong>
+            Kakadeo • Swaroop Nagar • Gumti 5
+          </div>
+          <div class="zone-chip">
+            <strong>Zone 4: South-Central</strong>
+            Govind Nagar • Barra • Gujaini
+          </div>
+          <div class="zone-chip">
+            <strong>Zone 5: South</strong>
+            Kidwai Nagar • Yashoda Nagar
+          </div>
+          <div class="zone-chip">
+            <strong>Zone 6: East</strong>
+            Chakeri • Shyam Nagar • Cantt
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Professional Government Style Footer -->
+  <footer class="main-footer">
+    <div class="container footer-grid">
+      <!-- Col 1: Portal About -->
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem;">
+          <div class="brand-logo-icon" style="width: 36px; height: 36px; font-size: 1.15rem;">
+            <i class="fa-solid fa-building-shield"></i>
+          </div>
+          <strong style="color: #ffffff; font-size: 1.25rem;">SudhaarSetu</strong>
+        </div>
+        <p style="font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1rem; line-height: 1.5;">
+          “Your Issue. Our Responsibility. Better Kanpur.”<br>
+          Citizen-powered civic issue reporting platform for a better Kanpur.
+        </p>
+        <div class="footer-disclaimer-card">
+          <i class="fa-solid fa-circle-info" style="color: #ff9933;"></i>
+          <strong>Project Notice:</strong> SudhaarSetu is a civic-technology prototype and project demonstration. It is not officially owned or operated by Kanpur Nagar Nigam or the Government of Uttar Pradesh.
+        </div>
+      </div>
+
+      <!-- Col 2: Quick Links -->
+      <div>
+        <h4 class="footer-title">Citizen Services</h4>
+        <ul class="footer-links">
+          <li><a href="report.html"><i class="fa-solid fa-angle-right"></i> Report an Issue</a></li>
+          <li><a href="track.html"><i class="fa-solid fa-angle-right"></i> Track Complaint Status</a></li>
+          <li><a href="map.html"><i class="fa-solid fa-angle-right"></i> Kanpur Issues Map</a></li>
+          <li><a href="dashboard.html"><i class="fa-solid fa-angle-right"></i> My Grievance Dashboard</a></li>
+          <li><a href="#howItWorks"><i class="fa-solid fa-angle-right"></i> How It Works</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Departments Routed -->
+      <div>
+        <h4 class="footer-title">Concerned Divisions</h4>
+        <ul class="footer-links">
+          <li><a href="report.html?category=pothole"><i class="fa-solid fa-angle-right"></i> Public Works (Roads)</a></li>
+          <li><a href="report.html?category=garbage"><i class="fa-solid fa-angle-right"></i> Solid Waste & Sanitation</a></li>
+          <li><a href="report.html?category=streetlight"><i class="fa-solid fa-angle-right"></i> Streetlight & Electrical</a></li>
+          <li><a href="report.html?category=water"><i class="fa-solid fa-angle-right"></i> Kanpur Jal Sansthan</a></li>
+          <li><a href="report.html?category=drainage"><i class="fa-solid fa-angle-right"></i> Drainage & Sewerage</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Public Helplines -->
+      <div>
+        <h4 class="footer-title">Civic Helplines</h4>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-phone" style="color: #ff9933; margin-top: 3px;"></i>
+          <div>
+            <strong>Kanpur Civic Helpline:</strong><br>
+            <span style="font-size: 0.95rem; color: #ffffff;">1533 / 1800-180-5120</span>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-shield-cat" style="color: #ff9933; margin-top: 3px;"></i>
+          <div>
+            <strong>Police & Emergency:</strong><br>
+            <span style="font-size: 0.95rem; color: #ffffff;">112</span>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-envelope" style="color: #ff9933; margin-top: 3px;"></i>
+          <div>
+            <strong>Portal Support:</strong><br>
+            <span>support@sudhaarsetu-knp.demo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div>
+        © 2026 SudhaarSetu — Civic-Tech Prototype for Kanpur, Uttar Pradesh.
+      </div>
+      <div style="display: flex; gap: 16px;">
+        <a href="#" style="color: #64748b;">Privacy Policy</a>
+        <a href="#" style="color: #64748b;">Terms of Service</a>
+        <a href="admin.html" style="color: #ffb366;">Department Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/script.js"></script>
+</body>
+</html>
